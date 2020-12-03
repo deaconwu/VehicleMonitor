@@ -26,6 +26,8 @@ public:
 	enum { IDD = IDD_MSGHANDLE_DIALOG };
 #endif
 
+	void OnTerminate();
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
 

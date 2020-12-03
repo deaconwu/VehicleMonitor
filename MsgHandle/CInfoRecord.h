@@ -58,6 +58,8 @@ public:
 
 	void UnSetRefreshVin() { memset(m_chRefreshVin, 0, VIN_LENGTH); }
 
+	void OnTerminate();
+
 private:
 
 	UCHAR m_chVin[MAX_VEHICLENUM][VIN_LENGTH]; //Ã¿Á¾³µvinÂë

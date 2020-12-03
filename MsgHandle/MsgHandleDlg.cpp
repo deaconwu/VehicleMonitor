@@ -172,6 +172,13 @@ LRESULT CMsgHandleDlg::OnQueryVin(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+void CMsgHandleDlg::OnTerminate()
+{
+	CInfoRecord::GetInstance()->OnTerminate();
+	m_statistics.OnDestroy();
+	m_warning.OnDestroy();
+}
+
 LRESULT CMsgHandleDlg::OnRefreshVin(WPARAM wParam, LPARAM lParam)
 {
 	m_warning.NotifyRefreshVin();

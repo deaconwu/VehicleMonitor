@@ -7,6 +7,8 @@
 
 CInfoRecord* CInfoRecord::m_pInstance = NULL;
 
+static bool g_bTerminate = false;
+
 UCHAR* g_recMem = (UCHAR*)malloc(SHAREMEM_SIZE);
 //UCHAR g_recMem[SHAREMEM_SIZE] = {};
 SYSTEMTIME g_datePre = {};
@@ -287,7 +289,7 @@ void CInfoRecord::OnParse(char buf[], int len)
 // 		}
 
  		DWORD dwThreadId;
- 		HANDLE hThread = CreateThread(NULL, NULL, OnRecThread, (LPVOID)pDir, 0, &dwThreadId);
+		HANDLE hThread = CreateThread(NULL, NULL, OnRecThread, (LPVOID)pDir, 0, &dwThreadId);
 
  		pDir = (char*)strtok(NULL, " ");
  	}
@@ -298,22 +300,18 @@ DWORD WINAPI OnRecThread(LPVOID lparam)
 	char strDir[200] = {};
 	strcpy(strDir, (const char*)lparam);
 
-// 	FILE *pFile = fopen(strDir, "rb");
-// 	if (NULL == pFile)
-// 	{
-// 		printf("");
-// 	}
-// 	else
-// 	{
-// 		fclose(pFile);
-// 	}
-
 	Sleep(1000);
+
+	if (g_bTerminate)
+		return 0;
 
 	FILE *pFile = fopen(strDir, "rb");
 	if (NULL == pFile)
 	{
 		Sleep(1500);
+		if (g_bTerminate)
+			return 0;
+
 		pFile = fopen(strDir, "rb");
 		if (NULL == pFile)
 			return 0;
@@ -347,6 +345,9 @@ DWORD WINAPI OnRecThread(LPVOID lparam)
 
 	while (itemNum>0)
 	{
+		if (g_bTerminate)
+			break;
+
 		//vinÂë
 		UCHAR chVin[VIN_LENGTH] = {};
 		memcpy(chVin, pBuf, VIN_LENGTH);
@@ -372,6 +373,11 @@ DWORD WINAPI OnRecThread(LPVOID lparam)
 	}
 
 	return 0;
+}
+
+void CInfoRecord::OnTerminate()
+{
+	g_bTerminate = true;
 }
 
 void CInfoRecord::OnStatistic(STSTATISTICDATA &stData)

@@ -68,6 +68,7 @@ BOOL CMsgHandleApp::InitInstance()
 	{
 		// TODO: 在此放置处理何时用
 		//  “取消”来关闭对话框的代码
+		dlg.OnTerminate();
 	}
 	else if (nResponse == -1)
 	{
