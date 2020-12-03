@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="997,62">
+    <VerticalLayout width="997" height="31">
+        <HorizontalLayout width="997" height="31" bkcolor="#FFFFFBF0">
+            <Button name="btnConn" text="连接" float="true" pos="677,5,0,0" width="75" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="button_nor.bmp" hotimage="button_over.bmp" pushedimage="button_down.bmp" disabledimage="button_disable.bmp" />
+            <Button name="btnDiscon" text="断开" float="true" pos="781,5,0,0" width="75" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="button_nor.bmp" hotimage="button_over.bmp" pushedimage="button_down.bmp" disabledimage="button_disable.bmp" />
+            <Label text="IP" float="true" pos="65,1,0,0" width="60" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="Port" float="true" pos="419,1,0,0" width="60" height="30" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Edit float="true" pos="128,5,0,0" width="258" height="23" bkimage="edit_bg.png" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+        </HorizontalLayout>
+        <HorizontalLayout width="997" height="31" bkcolor="#FFA6CAF0">
+            <Option name="optQuery" text="查询" float="true" pos="4,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="2" align="center" normalimage="tabbar_normal.bmp" hotimage="tabbar_hover.bmp" pushedimage="tabbar_pushed.bmp" group="tabsel" selected="true" selectedimage="tabbar_pushed.bmp" />
+            <Option name="optStatistics" text="统计" float="true" pos="51,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="2" align="center" normalimage="tabbar_normal.bmp" hotimage="tabbar_hover.bmp" pushedimage="tabbar_pushed.bmp" group="tabsel" selectedimage="tabbar_pushed.bmp" />
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>

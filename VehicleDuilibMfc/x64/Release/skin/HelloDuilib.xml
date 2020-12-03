@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="997,62">
+    <VerticalLayout width="997" height="31">
+        <HorizontalLayout name="layout1" width="997" height="31" bkcolor="#FFFFFBF0">
+            <Button name="btnConn" text="连接" float="true" pos="677,4,0,0" width="75" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="button_nor.bmp" hotimage="button_over.bmp" pushedimage="button_down.bmp" disabledimage="button_disable.bmp" />
+            <Button name="btnDiscon" text="断开" float="true" pos="780,4,0,0" width="75" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="button_nor.bmp" hotimage="button_over.bmp" pushedimage="button_down.bmp" disabledimage="button_disable.bmp" />
+            <Control float="true" pos="133,2,0,0" width="144" height="28" bkimage="edit_bg.png" />
+            <Label text="IP" float="true" pos="108,8,0,0" width="25" height="17" minwidth="42" minheight="21" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Edit name="editIp1" float="true" pos="134,5,0,0" width="30" height="23" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" maxchar="3" />
+            <Text text="." float="true" pos="163,14,0,0" width="8" height="12" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Edit name="editIp2" float="true" pos="171,5,0,0" width="30" height="23" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" maxchar="3" />
+            <Text text="." float="true" pos="201,14,0,0" width="8" height="12" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Edit name="editIp3" float="true" pos="209,5,0,0" width="30" height="23" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" maxchar="3" />
+            <Text text="." float="true" pos="238,14,0,0" width="8" height="12" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Edit name="editIp4" float="true" pos="246,5,0,0" width="30" height="23" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" maxchar="3" />
+            <Label text="Port" float="true" pos="381,6,0,0" width="42" height="21" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="2" align="center" />
+            <Edit name="editPort" float="true" pos="423,2,0,0" width="80" height="28" bkimage="edit_bg.png" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="1" align="center" />
+        </HorizontalLayout>
+        <HorizontalLayout width="997" height="31" bkcolor="#FFA6CAF0">
+            <Option name="optQuery" text="查询" float="true" pos="4,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="2" align="center" normalimage="tabbar_normal.bmp" hotimage="tabbar_hover.bmp" pushedimage="tabbar_pushed.bmp" group="tabsel" selected="true" selectedimage="tabbar_pushed.bmp" />
+            <Option name="optStatistics" text="统计" float="true" pos="51,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" font="2" align="center" normalimage="tabbar_normal.bmp" hotimage="tabbar_hover.bmp" pushedimage="tabbar_pushed.bmp" group="tabsel" selectedimage="tabbar_pushed.bmp" />
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="998,612">
+    <VerticalLayout width="998" height="612">
+        <HorizontalLayout width="997" height="31" bkcolor="#FFA6CAF0">
+            <Option name="optQuery" text="查询" float="true" pos="4,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="tabbar_normal.bmp" hotimage="tabbar_hover.bmp" pushedimage="tabbar_pushed.bmp" group="tabsel" selected="true" selectedimage="tabbar_pushed.bmp" />
+            <Option name="Statistics" text="统计" float="true" pos="51,4,0,0" width="45" height="23" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="tabbar_normal.bmp" hotimage="tabbar_hover.bmp" pushedimage="tabbar_pushed.bmp" group="tabsel" selectedimage="tabbar_pushed.bmp" />
+        </HorizontalLayout>
+        <HorizontalLayout width="998" height="529">
+            <TabLayout name="switch" width="995" height="526">
+                <HorizontalLayout width="994" height="526">
+                    <QueryDlg />
+                </HorizontalLayout>
+                <HorizontalLayout>
+                    <StatisticsDlg />
+                </HorizontalLayout>
+            </TabLayout>
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>

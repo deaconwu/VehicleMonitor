@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="998,611">
+    <VerticalLayout width="998" height="511" bkcolor="#FFC0DCC0">
+        <HorizontalLayout text="------整车数据--------------------------------------" bordersize="2" width="998" height="60">
+            <Label text="接入车辆数" float="true" pos="45,20,0,0" width="65" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelVehicleSumToday" text="200000" float="true" pos="111,22,0,0" width="48" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label name="LabelVehecleOnlineToday" text="101000" float="true" pos="256,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="在线车辆数" float="true" pos="188,20,0,0" width="67" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="离线车辆数" float="true" pos="340,20,0,0" width="69" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelVehecleOfflineToday" text="100000" float="true" pos="410,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="故障车辆数" float="true" pos="495,20,0,0" width="69" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelVehecleFaultToday" text="1111111" float="true" pos="565,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="充电车辆数" float="true" pos="653,20,0,0" width="69" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelVehecleRechargeToday" text="111111111" float="true" pos="724,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Text text="---------今日车辆--------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,2,0,0" width="987" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,48,0,0" width="990" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+        </HorizontalLayout>
+        <HorizontalLayout width="998" height="86">
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,71,0,0" width="1003" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label text="累计行驶里程" float="true" pos="44,19,0,0" width="77" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelMileageSum" text="1111.1111" float="true" pos="123,21,0,0" width="89" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="(万公里)" float="true" pos="213,19,0,0" width="52" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="累计碳减排" float="true" pos="378,19,0,0" width="67" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelCarbonEmission" text="1111.1111" float="true" pos="446,21,0,0" width="89" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="(万升)" float="true" pos="536,19,0,0" width="40" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="累计节油量" float="true" pos="54,45,0,0" width="67" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Text text="---------节能减排数据----------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,2,0,0" width="993" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label name="LabelFuelThrift" text="1111.1111" float="true" pos="122,47,0,0" width="89" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="(万升)" float="true" pos="212,45,0,0" width="40" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="累计耗电量" float="true" pos="378,44,0,0" width="67" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelPowerConsume" text="1111.1111" float="true" pos="446,46,0,0" width="89" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="(万千瓦时)" float="true" pos="536,45,0,0" width="61" height="21" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>

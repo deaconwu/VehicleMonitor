@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="998,611">
+    <VerticalLayout width="998" height="511" bkcolor="#FFC0DCC0">
+        <HorizontalLayout width="996" height="34">
+            <Button name="btnQuery" text="查询" float="true" pos="302,5,0,0" width="75" height="24" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" normalimage="button_nor.bmp" hotimage="button_over.bmp" pushedimage="button_down.bmp" />
+            <Label text="请输入vin码" float="true" pos="54,7,0,0" width="76" height="22" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Edit float="true" pos="150,5,0,0" width="123" height="26" bkimage="edit_bg.png" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            <Label text="采集时间" float="true" pos="530,5,0,0" width="57" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" font="1" align="center" />
+            <Label text="2020-11-11 10:22:30" float="true" pos="588,7,0,0" width="131" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" align="center" />
+        </HorizontalLayout>
+        <HorizontalLayout text="------整车数据--------------------------------------" bordersize="2" width="998" height="100">
+            <Label text="车辆状态" float="true" pos="55,20,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_0" text="熄火" float="true" pos="113,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label name="LabelF1_1" text="熄火" float="true" pos="249,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="充电状态" float="true" pos="191,20,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="运行模式" float="true" pos="329,20,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_2" text="纯电" float="true" pos="387,22,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="车速" float="true" pos="471,20,0,0" width="41" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_3" text="1111111" float="true" pos="514,22,0,0" width="44" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="累计里程" float="true" pos="604,21,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_4" text="111111111" float="true" pos="662,23,0,0" width="161" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="总电压" float="true" pos="55,46,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_5" text="11111" float="true" pos="113,48,0,0" width="74" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="总电流" float="true" pos="205,46,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_6" text="11111" float="true" pos="263,48,0,0" width="73" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="SOC" float="true" pos="353,46,0,0" width="30" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_7" text="11111" float="true" pos="385,48,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="DC/DC状态" float="true" pos="467,46,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_8" text="11111" float="true" pos="525,48,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="挡位" float="true" pos="603,47,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_9" text="11111" float="true" pos="661,49,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="绝缘电阻" float="true" pos="56,71,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_10" text="11111" float="true" pos="114,73,0,0" width="74" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="加速踏板行程值" float="true" pos="206,71,0,0" width="99" height="21" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_11" text="11111" float="true" pos="306,73,0,0" width="73" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="制动踏板状态" float="true" pos="396,71,0,0" width="81" height="21" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="LabelF1_12" text="11111" float="true" pos="479,73,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Text text="---------整车数据--------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,2,0,0" width="987" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,92,0,0" width="990" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+        </HorizontalLayout>
+        <HorizontalLayout width="998" height="78">
+            <Text text="---------驱动电机数据----------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,2,0,0" width="993" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,68,0,0" width="1003" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label text="电机状态" float="true" pos="54,19,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_0" text="耗电" float="true" pos="111,21,0,0" width="33" height="19" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电机控制器温度" float="true" pos="194,19,0,0" width="90" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_1" text="11111" float="true" pos="286,21,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电机转速" float="true" pos="390,19,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_2" text="111111111" float="true" pos="448,21,0,0" width="65" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电机转矩" float="true" pos="564,19,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_3" text="111111111" float="true" pos="622,21,0,0" width="65" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电机温度" float="true" pos="726,19,0,0" width="56" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_4" text="111111111" float="true" pos="784,21,0,0" width="65" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电机控制器输入电压" float="true" pos="54,43,0,0" width="113" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_5" text="11111" float="true" pos="168,45,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="直流控制器直流母线电流" float="true" pos="247,43,0,0" width="137" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label2_6" text="11111" float="true" pos="385,46,0,0" width="56" height="18" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+        </HorizontalLayout>
+        <HorizontalLayout width="998" height="51">
+            <Text text="---------位置数据--------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,0,0,0" width="993" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label text="经度" float="true" pos="54,17,0,0" width="35" height="21" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label5_0" text="11111111111" float="true" pos="92,19,0,0" width="94" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label name="Label5_1" text="11111111111" float="true" pos="247,19,0,0" width="94" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="纬度" float="true" pos="209,17,0,0" width="35" height="21" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,41,0,0" width="995" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+        </HorizontalLayout>
+        <HorizontalLayout width="998" height="81">
+            <Text text="---------极值数据--------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,1,0,0" width="994" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,69,0,0" width="989" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label text="最高电压单体号" float="true" pos="55,19,0,0" width="91" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_0" text="11111" float="true" pos="149,22,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label name="Label6_1" text="11111" float="true" pos="334,22,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电池单体电压最高值" float="true" pos="219,19,0,0" width="113" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_4" text="11111" float="true" pos="510,22,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="最高温度探针号" float="true" pos="416,19,0,0" width="91" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_5" text="11111" float="true" pos="659,22,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="最高温度值" float="true" pos="588,19,0,0" width="69" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_2" text="11111" float="true" pos="148,47,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="最低电压单体号" float="true" pos="54,44,0,0" width="91" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_3" text="11111" float="true" pos="333,47,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电池单体电压最低值" float="true" pos="218,44,0,0" width="113" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_6" text="11111" float="true" pos="510,47,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="最低温度探针号" float="true" pos="416,44,0,0" width="91" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label6_7" text="11111" float="true" pos="659,47,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="最低温度值" float="true" pos="588,44,0,0" width="69" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+        </HorizontalLayout>
+        <HorizontalLayout width="998" height="262">
+            <Text text="---------报警数据--------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,0,0,0" width="994" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label text="总次数" float="true" pos="55,18,0,0" width="43" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_0" text="111" float="true" pos="100,21,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="温度差异报警" float="true" pos="55,43,0,0" width="79" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_1" text="111" float="true" pos="136,46,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电池高温报警" float="true" pos="202,43,0,0" width="79" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_2" text="111" float="true" pos="283,46,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="车载储能装置类型过压报警" float="true" pos="350,43,0,0" width="151" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_3" text="111" float="true" pos="503,46,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="车载储能装置类型欠压报警" float="true" pos="569,43,0,0" width="151" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_4" text="111" float="true" pos="722,46,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="SOC低报警" float="true" pos="790,43,0,0" width="59" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_5" text="111" float="true" pos="851,46,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="单体电池欠压报警" float="true" pos="229,67,0,0" width="102" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_7" text="111" float="true" pos="333,71,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="SOC高报警" float="true" pos="401,67,0,0" width="59" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_8" text="111" float="true" pos="462,70,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label name="Label7_9" text="111" float="true" pos="603,70,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="SOC跳变报警" float="true" pos="530,67,0,0" width="71" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text="可充电储能系统不匹配报警" float="true" pos="673,67,0,0" width="151" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_10" text="111" float="true" pos="826,70,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="电池单体一致性差报警" float="true" pos="57,91,0,0" width="125" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_11" text="111" float="true" pos="184,94,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="绝缘报警" float="true" pos="253,91,0,0" width="59" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_12" text="111" float="true" pos="314,94,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="DC-DC温度报警" float="true" pos="386,91,0,0" width="82" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_13" text="111" float="true" pos="470,94,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="制动系统报警" float="true" pos="543,91,0,0" width="80" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_14" text="111" float="true" pos="625,94,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="DC-DC状态报警" float="true" pos="705,90,0,0" width="82" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_15" text="111" float="true" pos="789,94,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="驱动电池控制器温度报警" float="true" pos="55,115,0,0" width="142" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_16" text="111" float="true" pos="199,118,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="高压互锁状态报警" float="true" pos="268,115,0,0" width="103" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_17" text="111" float="true" pos="373,118,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label name="Label7_18" text="111" float="true" pos="548,118,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="驱动电机温度报警" float="true" pos="443,115,0,0" width="103" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_19" text="111" float="true" pos="768,118,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+            <Label text="车载储能装置类型过充报警" float="true" pos="616,115,0,0" width="150" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Text text="-------------------------------------------------------------------------------------------------------------------------------------------------------------------" float="true" pos="1,140,0,0" width="995" height="15" textpadding="2,0,2,0" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="wrap" />
+            <Label text="单体电池过压报警" float="true" pos="55,67,0,0" width="102" height="22" textcolor="#00000080" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label name="Label7_6" text="111" float="true" pos="159,71,0,0" width="56" height="16" textcolor="#00800080" disabledtextcolor="#FFA7A6AA" />
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>
