@@ -11,7 +11,7 @@ int main()
 	CSmtp smtp(25,                             /*smtp端口*/
 		"smtp.qq.com",                 /*smtp服务器地址*/
 		"707720629@qq.com",         /*你的邮箱地址*/
-		"ullzgjrpjhkjbceh",                   /*邮箱密码*/
+		"ullzgjrpjhkjbceh",                   /*邮箱密码(授权码)*/
 		"874440975@qq.com zhoukesong@126.com deaconwu@163.com",  /*目的邮箱地址,这一部分用空格分割可添加多个收信人*/
 		"vin码",                           /*主题*/
 		"JTHAAABH3L2000396码"      /*邮件正文*/
