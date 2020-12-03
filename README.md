@@ -18,6 +18,11 @@
 6. smtp
 	实现Smtp发邮件，包括主题、内容、附件，中英文，多个收件人
 	发送方需登录邮箱获取授权码
+
+7. VehicleDuilibMfc
+	实现MFC界面美化
+	需下载https://github.com/quanzhuo/DuiDesigner，编译生成UI设计工具，添加控件布局并生成控件属性表(.xml)
+	需下载https://github.com/duilib/duilib, 编译生成DuiLib.lib
 	
-7. MsgHandle
+8. MsgHandle
 	实现实时接收(异步Socket)，实时解析(线程)，定时触发统计(线程)，实时预警(线程)，存储(循环队列)
