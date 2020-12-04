@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CInfoRecord.h"
 #include "AlertCalc.h"
+#include "TimeStamp.h"
 #include <time.h>
 #include "CWarningRank.h"
 #include "UserMessage.h"
@@ -385,7 +386,7 @@ void CInfoRecord::OnStatistic(STSTATISTICDATA &stData)
 	SYSTEMTIME stNow;
 	GetLocalTime(&stNow);
 
-	time_t tNow = stNow.wHour * 60 * 60 + stNow.wMinute * 60 + stNow.wSecond;
+	time_t tNow = ConvertSecondsTime(stNow);//stNow.wHour * 60 * 60 + stNow.wMinute * 60 + stNow.wSecond;
 
 	for (UINT i=0; i<m_vehicleNum; i++)
 	{
@@ -404,9 +405,9 @@ void CInfoRecord::OnStatistic(STSTATISTICDATA &stData)
 				stData.iRechargeToday += 1;
 			}
 
-			time_t tRec = m_sTime[i].wHour* 60 * 60 + m_sTime[i].wMinute * 60 + m_sTime[i].wSecond;
+			time_t tRec = ConvertSecondsTime(m_sTime[i]);//m_sTime[i].wHour* 60 * 60 + m_sTime[i].wMinute * 60 + m_sTime[i].wSecond;
 
-			if ((tNow > tRec) && (tNow - tRec <= TIME_OFFLINE_DISTANCE))
+			if ((tNow >= tRec) && (tNow - tRec <= TIME_OFFLINE_DISTANCE))
 			{
 				stData.iOnlineToday += 1;
 			}
