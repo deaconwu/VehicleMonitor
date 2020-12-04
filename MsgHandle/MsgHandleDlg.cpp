@@ -20,7 +20,7 @@
 // CMsgHandleDlg 对话框
 CMsgHandleDlg::CMsgHandleDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MSGHANDLE_DIALOG, pParent),
-	m_pSock(NULL)
+	m_pInfoSocket(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -44,54 +44,26 @@ END_MESSAGE_MAP()
 
 bool CMsgHandleDlg::OnConnect()
 {
-	WORD sockVersion = MAKEWORD(2, 2);
-	WSADATA wsaData;
-	if (WSAStartup(sockVersion, &wsaData) != 0)
+	if (NULL == m_pInfoSocket)
+	{
+		UCHAR ip1 = 0, ip2 = 0, ip3 = 0, ip4 = 0;
+		CIPAddressCtrl* pIPAddr = (CIPAddressCtrl*)GetDlgItem(IDC_IPADDRESS);
+		pIPAddr->GetAddress(ip1, ip2, ip3, ip4);
+
+		CString portStr;
+		CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_PORT);
+		pEdit->GetWindowText(portStr);
+
+		m_pInfoSocket = new CInfoSocket(ip1, ip2, ip3, ip4, portStr, this->m_hWnd);
+	}
+
+	if (m_pInfoSocket->OnConnect() == INVALID_SOCKET)
 	{
 		return false;
 	}
 
-	//创建套接字
-	m_pSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (m_pSock == INVALID_SOCKET)
+	if (m_pInfoSocket->OnAsync())
 	{
-		WSACleanup();
-		return false;
-	}
-
-	sockaddr_in serAddr;
-	serAddr.sin_family = AF_INET;
-	CIPAddressCtrl* pIPAddr = (CIPAddressCtrl*)GetDlgItem(IDC_IPADDRESS);
-	pIPAddr->GetAddress(serAddr.sin_addr.S_un.S_un_b.s_b1, serAddr.sin_addr.S_un.S_un_b.s_b2, serAddr.sin_addr.S_un.S_un_b.s_b3, serAddr.sin_addr.S_un.S_un_b.s_b4);
-
-	CString portStr;
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_PORT);
-	pEdit->GetWindowText(portStr);
-	int iPort = _ttoi(portStr);
-	serAddr.sin_port = htons(iPort);
-
-	if (connect(m_pSock, (sockaddr *)&serAddr, sizeof(serAddr)) == SOCKET_ERROR)
-	{
-		DWORD dwErr = GetLastError();
-		closesocket(m_pSock);
-		WSACleanup();
-		m_pSock = INVALID_SOCKET;
-		return false;
-	}
-
-// 	char buf[BUFFER_SIZE] = {};
-// 	int size = 0;
-// 	INT optVal = 0;
-// 	INT optLen = sizeof(optVal);
-// 	getsockopt(m_pSock, SOL_SOCKET, SO_RCVBUF, (char*)&optVal, &optLen);
-// 	size = recv(m_pSock, buf, optVal, 0);
-// 	DWORD dw = GetLastError();
-	if (WSAAsyncSelect(m_pSock, this->m_hWnd, NETWORK_EVENT, FD_READ | FD_CLOSE))
-	{
-		DWORD dwErr = GetLastError();
-		closesocket(m_pSock);
-		WSACleanup();
-		m_pSock = INVALID_SOCKET;
 		return false;
 	}
 
@@ -106,41 +78,28 @@ LRESULT CMsgHandleDlg::OnNetEvent(WPARAM wParam, LPARAM lParam)
 
 	char buf[BUFFER_SIZE] = {};
 	int size = 0;
-// 	INT optVal = 0;
-// 	INT optLen = sizeof(optVal);
-
-	CString csStr = _T("");
 
 	switch (iEvent)
 	{
 	case FD_READ:
 	{
-		//getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char*)&optVal, &optLen);
-		int size = recv(sock, buf, BUFFER_SIZE, 0);
+		int size = m_pInfoSocket->OnReceive(buf, BUFFER_SIZE);
 		if (size > 0)
 		{
 			CInfoRecord::GetInstance()->OnParse(buf, size);
 		}
 		else
 		{
-			closesocket(m_pSock);
-			WSACleanup();
-			m_pSock = NULL;
-			OnConnect();
+			m_pInfoSocket->OnReConnect();
 		}
 
 		break;
 	}
 	case FD_CLOSE:
 	{
-		closesocket(m_pSock);
-		WSACleanup();
-		m_pSock = NULL;
-		while (!OnConnect())
+		while (m_pInfoSocket->OnReConnect() == INVALID_SOCKET)
 		{
-			closesocket(m_pSock);
-			WSACleanup();
-			m_pSock = NULL;
+			
 		}
 
 		break;
@@ -177,6 +136,14 @@ void CMsgHandleDlg::OnTerminate()
 	CInfoRecord::GetInstance()->OnTerminate();
 	m_statistics.OnDestroy();
 	m_warning.OnDestroy();
+
+	if (NULL != m_pInfoSocket)
+	{
+		m_pInfoSocket->OnClose();
+
+		delete m_pInfoSocket;
+		m_pInfoSocket = NULL;
+	}
 }
 
 LRESULT CMsgHandleDlg::OnRefreshVin(WPARAM wParam, LPARAM lParam)
@@ -298,9 +265,7 @@ void CMsgHandleDlg::OnBnClickedBtnConnect()
 
 void CMsgHandleDlg::OnBnClickedBtnDisconnect()
 {
-	closesocket(m_pSock);
-	WSACleanup();
-	m_pSock = INVALID_SOCKET;
+	m_pInfoSocket->OnClose();
 
 	((CEdit*)GetDlgItem(IDC_IPADDRESS))->EnableWindow(true);
 	((CEdit*)GetDlgItem(IDC_EDIT_PORT))->EnableWindow(true);

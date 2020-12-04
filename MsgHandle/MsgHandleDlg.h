@@ -9,6 +9,7 @@
 // #include "CAlertData.h"
 // #include "CVoltageData.h"
 #include "CWarningDlg.h"
+#include "CInfoSocket.h"
 
 // CMsgHandleDlg 对话框
 class CMsgHandleDlg : public CDialogEx
@@ -49,7 +50,6 @@ public:
 private:
 	bool OnConnect();
 
-	SOCKET m_pSock;
 	CTabCtrl m_tab;
 	CQuery m_query;
 	CStatistics m_statistics;
@@ -57,6 +57,7 @@ private:
 // 	CVoltageData m_voltage;
 	CWarningDlg m_warning;
 
+	CInfoSocket* m_pInfoSocket;
 public:
 	afx_msg void OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult);
 };
