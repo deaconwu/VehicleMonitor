@@ -119,6 +119,9 @@
     <ClCompile Include="CHistoryRecordDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TimeStamp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MsgHandle.rc">
