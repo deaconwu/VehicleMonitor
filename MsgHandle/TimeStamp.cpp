@@ -38,3 +38,48 @@ ULONG ConvertSecondsTime(SYSTEMTIME& stTime)
 
 	return iSeconds;
 }
+
+void ConvertDateTime(ULONG lSeconds, SYSTEMTIME& stTime)
+{
+	USHORT iYear = 1970;
+	UCHAR iMonth = 0;
+	USHORT iDay = 0;
+	ULONG lDays = lSeconds / SECONDS_OF_DAY;	//总天数
+	ULONG lSecs = lSeconds % SECONDS_OF_DAY;	//除去前面天数，最后一天的秒数
+
+	while (lDays > 365)
+	{
+		if (((iYear % 4 == 0) && (iYear % 100 != 0)) || (iYear % 400 == 0))
+			lDays -= 366;
+		else
+			lDays -= 365;
+		iYear++;
+	}
+
+	if ((lDays == 365) && !(((iYear % 4 == 0) && (iYear % 100 != 0)) || (iYear % 400 == 0)))
+	{
+		lDays -= 365;
+		iYear++;
+	}
+
+	stTime.wYear = iYear;
+
+	for (iMonth = 1; iMonth <= 12; iMonth++)
+	{
+		if ((iMonth == 2) && (((iYear % 4 == 0) && (iYear % 100 != 0)) || (iYear % 400 == 0)))
+			iDay = 29;
+		else
+			iDay = DayOfMon[iMonth - 1];
+
+		if (lDays >= iDay)
+			lDays -= iDay;
+		else
+			break;
+	}
+
+	stTime.wMonth = iMonth;
+	stTime.wDay = (USHORT)(lDays + 1);
+	stTime.wHour = (lSecs / SECONDS_OF_HOUR) % HOURS_OF_DAY;
+	stTime.wMinute = (lSecs % SECONDS_OF_HOUR) / SECONDS_OF_MIN;
+	stTime.wSecond = (lSecs % SECONDS_OF_HOUR) % SECONDS_OF_MIN;
+}

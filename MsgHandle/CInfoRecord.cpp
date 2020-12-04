@@ -415,6 +415,9 @@ void CInfoRecord::OnStatistic(STSTATISTICDATA &stData)
 			{
 				stData.iOfflineToday += 1;
 			}
+
+// 			SYSTEMTIME stRec = {};
+// 			ConvertDateTime(tRec, stRec);
 		}
 	}
 }
