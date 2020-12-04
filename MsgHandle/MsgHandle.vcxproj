@@ -219,6 +219,7 @@
     <ClCompile Include="CHistoryRecord.cpp" />
     <ClCompile Include="CHistoryRecordDlg.cpp" />
     <ClCompile Include="CInfoRecord.cpp" />
+    <ClCompile Include="CInfoSocket.cpp" />
     <ClCompile Include="CQuery.cpp" />
     <ClCompile Include="CStatistics.cpp" />
     <ClCompile Include="CVoltageData.cpp" />
