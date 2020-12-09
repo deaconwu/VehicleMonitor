@@ -319,11 +319,8 @@ void CInfoRecord::InsertRec(INT iPos, char* pBuf)
 		m_warningValueTimes[2][iPos] += 1;
 	}
 
-	pRec->F6_5 -= 40;
-	pRec->F6_7 -= 40;
-
 	//¹ýÎÂ
-	if (pRec->F6_5 >= 95 && pRec->F6_5 != 254)
+	if (pRec->F6_5 >= 95 && pRec->F6_5 <= 250)
 	{
 		m_warningValueTimes[3][iPos] += 1;
 	}
@@ -801,6 +798,7 @@ void CInfoRecord::OnWarning(STWARNINGDATA &stData)
 
 bool CInfoRecord::QueryLatestInfo(UCHAR pVin[], STRECDATA &stData, UINT alertTimes[])
 {
+	WaitForSingleObject(g_hMutex, INFINITE);
 	INT iPos = FindVinPos(pVin);
 	if (iPos < 0 || NULL == m_pVehicleRec[iPos])
 	{
@@ -811,19 +809,19 @@ bool CInfoRecord::QueryLatestInfo(UCHAR pVin[], STRECDATA &stData, UINT alertTim
 	stData = *m_pVehicleRec[iPos];
 
 	memcpy(alertTimes, &m_alertTimes[iPos], ALERT_CATEGORY_NUM*sizeof(UINT));
+	ReleaseMutex(g_hMutex);
 
 	return true;
 }
 
 void CInfoRecord::QueryHistoryInfo(UCHAR pVin[], STRECDATA arrRec[], UCHAR& iIndex)
 {
+	WaitForSingleObject(g_hMutex, INFINITE);
 	INT iPos = FindVinPos(pVin);
 	if (iPos < 0)
 	{
 		return;
 	}
-
-	WaitForSingleObject(g_hMutex, INFINITE);
 
 	iIndex = m_iCurRecIndex[iPos];
 	LONGLONG offset = iPos * RECNUM_PER_VEHICEL * sizeof(STRECDATA);
