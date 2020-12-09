@@ -8,4 +8,6 @@
 
 ULONG ConvertSecondsTime(SYSTEMTIME& stTime);
 
+ULONG ConvertSecondsTime(USHORT iYear, UCHAR iMon, UCHAR iDay, UCHAR iHour, UCHAR iMin, UCHAR iSec);
+
 void ConvertDateTime(ULONG iSeconds, SYSTEMTIME& stTime);

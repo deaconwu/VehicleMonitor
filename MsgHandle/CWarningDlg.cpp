@@ -56,6 +56,8 @@ void CWarningDlg::LoadList(HWND hWnd)
 {
 	m_hWndMain = hWnd;
 	//UCHAR chVin[MAX_VEHICLENUM][VIN_LENGTH] = {};
+
+	/*
 	g_nVehicleNum = CInfoRecord::GetInstance()->GetVehicleNum();
 
 	UINT nLoadNum = NUM_VINLOADED_FIRST;
@@ -83,7 +85,7 @@ void CWarningDlg::LoadList(HWND hWnd)
 			DWORD dwThreadId;
 			HANDLE hThread = CreateThread(NULL, NULL, OnLoadCarThread, this->m_hWnd, 0, &dwThreadId);
 		}
-	}
+	}*/
 }
 
 void CWarningDlg::OnLauch()
@@ -136,6 +138,17 @@ END_MESSAGE_MAP()
 LRESULT CWarningDlg::OnGetData(WPARAM wParam, LPARAM lParam)
 {
 	STMSGWARNINGRANKSEQ* pMsg = (STMSGWARNINGRANKSEQ*)wParam;
+
+	int count = m_listVins.GetItemCount();
+	if (pMsg->iNum > count)
+	{
+		for (UINT i = count; i < pMsg->iNum; i++)
+		{
+			m_listVins.InsertItem(i, _T(""));
+			//m_listVins.SetItemText(i, 0, csStr);
+			m_listVins.SetItemState(i, ~LVIS_SELECTED, LVIS_SELECTED);
+		}
+	}
 
 	m_listVins.SetRedraw(FALSE);
 

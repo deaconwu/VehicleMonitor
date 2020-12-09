@@ -22,6 +22,9 @@ public:
 	afx_msg LRESULT OnQueryVin(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnRefreshVin(WPARAM wParam, LPARAM lParam);
 
+	afx_msg LRESULT OnRefreshYestoday(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnRefreshLastWeek(WPARAM wParam, LPARAM lParam);
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MSGHANDLE_DIALOG };

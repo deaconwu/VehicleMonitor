@@ -106,7 +106,7 @@ void CQuery::OnVinInput(char* pVin, bool bEditSet)
 	bool bRet = CInfoRecord::GetInstance()->QueryLatestInfo((UCHAR*)pVin, stData, alertTimes);
 	if (!bRet)
 	{
-		MessageBox(_T("该车辆不存在"), _T("提示"), MB_OK | MB_ICONERROR);
+		MessageBox(_T("该车辆信息未录入"), _T("提示"), MB_OK | MB_ICONERROR);
 		return;
 	}
 

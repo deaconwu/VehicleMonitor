@@ -75,6 +75,15 @@
     <ClInclude Include="CHistoryRecordDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TimeStamp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CRecordYestoday.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CRecordLastweek.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MsgHandle.cpp">
@@ -123,6 +132,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CInfoSocket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CRecordYestoday.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CRecordLastweek.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

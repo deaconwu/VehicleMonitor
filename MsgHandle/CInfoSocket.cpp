@@ -2,6 +2,8 @@
 #include "CInfoSocket.h"
 #include "UserMessage.h"
 
+#pragma comment(lib,"ws2_32.lib")
+
 SOCKET CInfoSocket::OnConnect()
 {
 	if (m_pSocket != INVALID_SOCKET)
@@ -42,6 +44,18 @@ SOCKET CInfoSocket::OnReConnect()
 	SOCKET sock = OnConnect();
 
 	return sock;
+}
+
+VOID CInfoSocket::OnReset(UCHAR ip1, UCHAR ip2, UCHAR ip3, UCHAR ip4, CString portStr)
+{
+	m_serAddr.sin_family = AF_INET;
+	m_serAddr.sin_addr.S_un.S_un_b.s_b1 = ip1;
+	m_serAddr.sin_addr.S_un.S_un_b.s_b2 = ip2;
+	m_serAddr.sin_addr.S_un.S_un_b.s_b3 = ip3;
+	m_serAddr.sin_addr.S_un.S_un_b.s_b4 = ip4;
+
+	int iPort = _ttoi(portStr);
+	m_serAddr.sin_port = htons(iPort);
 }
 
 VOID CInfoSocket::OnClose()

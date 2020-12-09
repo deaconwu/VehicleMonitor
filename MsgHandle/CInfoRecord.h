@@ -30,13 +30,19 @@ public:
 
 	bool ReadVin();
 
+	void WriteVin();
+
 	INT FindVinPos(UCHAR pVin[]);
+
+	INT FindVinPosEx(UCHAR pVin[]);
 
 	void InsertRec(INT pos, char* pBuf);
 
 	void OnParse(char buf[], int len);
 
-	void OnStatistic(STSTATISTICDATA &stData);
+	void OnStatisticToday(STSTATISTICDATATODAY &stData);
+
+	void OnMileageRank(STMSGMILEAGERANKSEQ &msgSeq);
 
 	void OnAlert(STALERTDATA &stData);
 
@@ -60,12 +66,19 @@ public:
 
 	void OnTerminate();
 
-private:
+	void MoveToYestoday();
 
+	void MoveToLastWeek();
+
+	void InsertVinAndSort(UCHAR pVin[]);
+
+private:
+	UCHAR m_chVinEx[MAX_VEHICLENUM][VIN_LENGTH];
 	UCHAR m_chVin[MAX_VEHICLENUM][VIN_LENGTH]; //每辆车vin码
 	STRECDATA* m_pVehicleRec[MAX_VEHICLENUM];
 	UCHAR m_iCurRecIndex[MAX_VEHICLENUM];
 	UINT m_vehicleNum;
+	UINT m_vehicleNumEx;
 	UINT m_alertTimes[MAX_VEHICLENUM][ALERT_CATEGORY_NUM];	//每辆车各类报警次数，0:总报警次数
 
 	UINT m_voltageException[MAX_VEHICLENUM];
@@ -77,6 +90,9 @@ private:
 
 	UCHAR m_bTodayJoin[MAX_VEHICLENUM];	//今日接入的车
 	SYSTEMTIME m_sTime[MAX_VEHICLENUM];	//最新接收时间
+
+	UINT m_chargeTimes;	//累计充电次数
+	ULONGLONG m_chargeSeconds;	//累计充电时长(连续两条记录为充电状态，计算采集时间间隔)
 
 	UCHAR m_chRefreshVin[VIN_LENGTH];
 

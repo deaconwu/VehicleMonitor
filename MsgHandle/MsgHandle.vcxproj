@@ -199,6 +199,8 @@
     <ClInclude Include="CInfoRecord.h" />
     <ClInclude Include="CInfoSocket.h" />
     <ClInclude Include="CQuery.h" />
+    <ClInclude Include="CRecordLastweek.h" />
+    <ClInclude Include="CRecordYestoday.h" />
     <ClInclude Include="CStatistics.h" />
     <ClInclude Include="CVoltageData.h" />
     <ClInclude Include="CVoltageRank.h" />
@@ -211,6 +213,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TimeStamp.h" />
     <ClInclude Include="UserMessage.h" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +224,8 @@
     <ClCompile Include="CInfoRecord.cpp" />
     <ClCompile Include="CInfoSocket.cpp" />
     <ClCompile Include="CQuery.cpp" />
+    <ClCompile Include="CRecordLastweek.cpp" />
+    <ClCompile Include="CRecordYestoday.cpp" />
     <ClCompile Include="CStatistics.cpp" />
     <ClCompile Include="CVoltageData.cpp" />
     <ClCompile Include="CVoltageRank.cpp" />

@@ -58,25 +58,44 @@
 #define IDC_EDIT_F6_2                   1038
 #define IDC_EDIT_POWERCONSUME           1038
 #define IDC_EDIT_F6_3                   1039
+#define IDC_EDIT_VEHICLESUMYESTODAY     1039
 #define IDC_EDIT_F6_4                   1040
+#define IDC_EDIT_VEHICLERECHARGEYESTODAY 1040
 #define IDC_EDIT_F6_5                   1041
+#define IDC_EDIT_VEHICLERECHARGEYETIMESYESTODAY 1041
 #define IDC_EDIT_F6_6                   1042
+#define IDC_EDIT_VEHICLERECHARGESECYESTODAY 1042
 #define IDC_EDIT_F6_7                   1043
+#define IDC_EDIT_VEHICLEONLINELASTWEEK  1043
 #define IDC_EDIT_F7_0                   1044
+#define IDC_EDIT_VEHICLEOFFLINELASTWEEK 1044
 #define IDC_EDIT_F7_1                   1045
+#define IDC_EDIT_VEHICLEFAULTLASTWEEK   1045
 #define IDC_EDIT_F7_2                   1046
+#define IDC_EDIT_VEHICLERECHARGELASTWEEK 1046
 #define IDC_EDIT_F7_3                   1047
+#define IDC_EDIT_VEHICLEUNLOCATEDLASTWEEK 1047
 #define IDC_EDIT_F7_4                   1048
+#define IDC_EDIT_MILEAGES1              1048
 #define IDC_EDIT_F7_5                   1049
+#define IDC_EDIT_MILEAGES2              1049
 #define IDC_EDIT_F7_8                   1050
+#define IDC_EDIT_MILEAGES3              1050
 #define IDC_EDIT_F7_9                   1051
+#define IDC_EDIT_MILEAGES4              1051
 #define IDC_EDIT_F7_6                   1052
+#define IDC_EDIT_MILEAGES5              1052
 #define IDC_EDIT_F7_7                   1053
+#define IDC_STATICVIN1                  1053
 #define IDC_EDIT_F7_19                  1054
+#define IDC_STATICVIN2                  1054
 #define IDC_EDIT_F7_20                  1055
 #define IDC_EDIT_F7_11                  1055
+#define IDC_STATICVIN3                  1055
 #define IDC_EDIT_F7_12                  1056
+#define IDC_STATICVIN4                  1056
 #define IDC_EDIT_F7_13                  1057
+#define IDC_STATICVIN5                  1057
 #define IDC_EDIT_F7_14                  1058
 #define IDC_EDIT_F7_15                  1059
 #define IDC_EDIT_F7_16                  1060
@@ -89,7 +108,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        141
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1035
+#define _APS_NEXT_CONTROL_VALUE         1058
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

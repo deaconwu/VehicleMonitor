@@ -29,6 +29,8 @@ public:
 
 	SOCKET OnReConnect();
 
+	VOID OnReset(UCHAR ip1, UCHAR ip2, UCHAR ip3, UCHAR ip4, CString portStr);
+
 	VOID OnClose();
 
 	INT OnAsync();

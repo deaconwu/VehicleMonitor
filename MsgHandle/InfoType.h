@@ -4,15 +4,16 @@
 #define BUFFER_SIZE 2000
 #define MAX_FILE_SIZE 5000*79+4
 #define VIN_LENGTH	17
-#define MAX_VEHICLENUM 200000
+#define MAX_VEHICLENUM 260000
 #define RECNUM_PER_VEHICEL 64	//每辆车最多保留64条RecData
 #define SHAREMEM_SIZE MAX_VEHICLENUM * RECNUM_PER_VEHICEL * sizeof(STRECDATA)
 #define ALERT_CATEGORY_NUM 20
 #define TIME_OFFLINE_DISTANCE 10 * 60	//距离多长时间未发信息视为离线车辆(10分钟)
 #define VOLTAGE_CATEGORY_NUM 7	//单体电压分类 0、1-2650、2651-4200、4201-15000、15001-65533、65534、65535
 #define WARNING_CATEGORY_NUM 7	//欠压[1,2827]、过压[4250,15000]、异常65534、过温、异常254、电压警报、温度警报
-#define NUM_VINLOADED_PERTIME 1000
-#define NUM_VINLOADED_FIRST 500
+#define NUM_VINLOADED_PERTIME 3000
+#define NUM_VINLOADED_FIRST 1000
+#define NUM_MILEAGERANK	5
 
 #pragma pack (1)
 
@@ -64,15 +65,51 @@ typedef struct RecData
 	UCHAR F8[6];    //年月日时分秒 62
 } STRECDATA;
 
-typedef struct StatisticData
+typedef struct StatisticDataToday
 {
-	UINT iSumToday;
-	UINT iOnlineToday;
-	UINT iOfflineToday;
-	UINT iDefaultToday;
-	UINT iRechargeToday;
+	UINT iJoin;
+	UINT iOnline;
+	UINT iOffline;
+	UINT iFault;
+	UINT iRecharge;
 	ULONGLONG iMileageSum;
-} STSTATISTICDATA;
+} STSTATISTICDATATODAY;
+
+typedef struct StatisticDataYestoday
+{
+	UINT iJoin;
+	UINT iRechargeNum;
+	UINT iRechargeTimes;
+	ULONGLONG iRechargeSeconds;
+} STSTATISTICDATAYESTODAY;
+
+typedef struct StatisticDataLastweek
+{
+	UINT iOnline;
+	UINT iOffline;
+	UINT iFault;
+	UINT iRecharge;
+	UINT iUnlocated;
+} STSTATISTICDATALASTWEEK;
+
+typedef struct VinMileage
+{
+	UCHAR chVin[VIN_LENGTH];
+	UINT iMileage;
+} STVINMILEAGE;
+
+typedef struct MsgMileageRankSeq
+{
+	VinMileage stNode[NUM_MILEAGERANK];
+} STMSGMILEAGERANKSEQ;
+
+typedef struct VinMileageLink
+{
+	UCHAR chVin[VIN_LENGTH];
+	UINT iMileage;
+	struct VinMileageLink* pPre;
+	struct VinMileageLink* pNext;
+} STVINMILEAGELINK, *PSTVINMILEAGELINK;
 
 typedef struct AlertData
 {

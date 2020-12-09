@@ -11,8 +11,6 @@
 #include "CHistoryRecord.h"
 #include "UserMessage.h"
 
-#pragma comment(lib,"ws2_32.lib")
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -40,21 +38,27 @@ BEGIN_MESSAGE_MAP(CMsgHandleDlg, CDialogEx)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CMsgHandleDlg::OnTcnSelchangeTab)
 	ON_MESSAGE(UM_QUERYVINS, OnQueryVin)
 	ON_MESSAGE(UM_REFRESHREC, OnRefreshVin)
+	ON_MESSAGE(UM_YESTODAYREC, OnRefreshYestoday)
+	ON_MESSAGE(UM_LASTWEEKREC, OnRefreshLastWeek)
 END_MESSAGE_MAP()
 
 bool CMsgHandleDlg::OnConnect()
 {
+	UCHAR ip1 = 0, ip2 = 0, ip3 = 0, ip4 = 0;
+	CIPAddressCtrl* pIPAddr = (CIPAddressCtrl*)GetDlgItem(IDC_IPADDRESS);
+	pIPAddr->GetAddress(ip1, ip2, ip3, ip4);
+
+	CString portStr;
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_PORT);
+	pEdit->GetWindowText(portStr);
+
 	if (NULL == m_pInfoSocket)
 	{
-		UCHAR ip1 = 0, ip2 = 0, ip3 = 0, ip4 = 0;
-		CIPAddressCtrl* pIPAddr = (CIPAddressCtrl*)GetDlgItem(IDC_IPADDRESS);
-		pIPAddr->GetAddress(ip1, ip2, ip3, ip4);
-
-		CString portStr;
-		CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_PORT);
-		pEdit->GetWindowText(portStr);
-
 		m_pInfoSocket = new CInfoSocket(ip1, ip2, ip3, ip4, portStr, this->m_hWnd);
+	}
+	else
+	{
+		m_pInfoSocket->OnReset(ip1, ip2, ip3, ip4, portStr);
 	}
 
 	if (m_pInfoSocket->OnConnect() == INVALID_SOCKET)
@@ -149,6 +153,18 @@ void CMsgHandleDlg::OnTerminate()
 LRESULT CMsgHandleDlg::OnRefreshVin(WPARAM wParam, LPARAM lParam)
 {
 	m_warning.NotifyRefreshVin();
+	return 0;
+}
+
+LRESULT CMsgHandleDlg::OnRefreshYestoday(WPARAM wParam, LPARAM lParam)
+{
+	m_statistics.OnYestodayRec();
+	return 0;
+}
+
+LRESULT CMsgHandleDlg::OnRefreshLastWeek(WPARAM wParam, LPARAM lParam)
+{
+	m_statistics.OnLastWeekRec();
 	return 0;
 }
 
