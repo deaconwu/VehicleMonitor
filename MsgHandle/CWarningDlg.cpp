@@ -57,7 +57,6 @@ void CWarningDlg::LoadList(HWND hWnd)
 	m_hWndMain = hWnd;
 	//UCHAR chVin[MAX_VEHICLENUM][VIN_LENGTH] = {};
 
-	/*
 	g_nVehicleNum = CInfoRecord::GetInstance()->GetVehicleNum();
 
 	UINT nLoadNum = NUM_VINLOADED_FIRST;
@@ -69,23 +68,23 @@ void CWarningDlg::LoadList(HWND hWnd)
 
 	for (UINT i = 0; i < nLoadNum; i++)
 	{
-		//CString csStr(chVin[i]);
-		m_listVins.InsertItem(i, _T(""));
-		//m_listVins.SetItemText(i, 0, csStr);
-		m_listVins.SetItemState(i, ~LVIS_SELECTED, LVIS_SELECTED);
+	//CString csStr(chVin[i]);
+	m_listVins.InsertItem(i, _T(""));
+	//m_listVins.SetItemText(i, 0, csStr);
+	m_listVins.SetItemState(i, ~LVIS_SELECTED, LVIS_SELECTED);
 	}
 
 	g_nNumLoaded = nLoadNum;
 
 	if (nLeftNum > 0)
 	{
-		UINT nThreadCount = nLeftNum / NUM_VINLOADED_PERTIME + 1;
-		for (UINT i = 0; i < nThreadCount; i++)
-		{
-			DWORD dwThreadId;
-			HANDLE hThread = CreateThread(NULL, NULL, OnLoadCarThread, this->m_hWnd, 0, &dwThreadId);
-		}
-	}*/
+	UINT nThreadCount = nLeftNum / NUM_VINLOADED_PERTIME + 1;
+	for (UINT i = 0; i < nThreadCount; i++)
+	{
+		DWORD dwThreadId;
+		HANDLE hThread = CreateThread(NULL, NULL, OnLoadCarThread, this->m_hWnd, 0, &dwThreadId);
+	}
+	}
 }
 
 void CWarningDlg::OnLauch()

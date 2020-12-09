@@ -802,6 +802,7 @@ bool CInfoRecord::QueryLatestInfo(UCHAR pVin[], STRECDATA &stData, UINT alertTim
 	INT iPos = FindVinPos(pVin);
 	if (iPos < 0 || NULL == m_pVehicleRec[iPos])
 	{
+		ReleaseMutex(g_hMutex);
 		return false;
 	}
 
@@ -820,6 +821,7 @@ void CInfoRecord::QueryHistoryInfo(UCHAR pVin[], STRECDATA arrRec[], UCHAR& iInd
 	INT iPos = FindVinPos(pVin);
 	if (iPos < 0)
 	{
+		ReleaseMutex(g_hMutex);
 		return;
 	}
 
