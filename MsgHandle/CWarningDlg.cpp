@@ -140,7 +140,7 @@ LRESULT CWarningDlg::OnGetData(WPARAM wParam, LPARAM lParam)
 	STMSGWARNINGRANKSEQ* pMsg = (STMSGWARNINGRANKSEQ*)wParam;
 
 	int count = m_listVins.GetItemCount();
-	if (pMsg->iNum > count)
+	if (pMsg->iNum > (UINT)count)
 	{
 		for (UINT i = count; i < pMsg->iNum; i++)
 		{
