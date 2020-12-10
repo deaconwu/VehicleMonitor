@@ -249,9 +249,9 @@ DWORD WINAPI OnStatisThread(LPVOID lparam)
 		CInfoRecord::GetInstance()->OnStatisticToday(stData);
 		SendMessage(hWnd, UM_STATISTIC, (WPARAM)&stData, 0);
 
-		STMSGMILEAGERANKSEQ stRank = {};
-		CInfoRecord::GetInstance()->OnMileageRank(stRank);
-		SendMessage(hWnd, UM_MILEAGERANK, (WPARAM)&stRank, 0);
+// 		STMSGMILEAGERANKSEQ stRank = {};
+// 		CInfoRecord::GetInstance()->OnMileageRank(stRank);
+// 		SendMessage(hWnd, UM_MILEAGERANK, (WPARAM)&stRank, 0);
 
 		Sleep(1000);
 	}

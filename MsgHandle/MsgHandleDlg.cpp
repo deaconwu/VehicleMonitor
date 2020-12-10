@@ -220,7 +220,7 @@ BOOL CMsgHandleDlg::OnInitDialog()
 
 // 	m_alert.LoadList();
 // 	m_voltage.LoadList(this->m_hWnd);
-	m_warning.LoadList(this->m_hWnd);
+//	m_warning.LoadList(this->m_hWnd);
 #else
 	CInfoRecord::GetInstance()->SaveBin();
 #endif

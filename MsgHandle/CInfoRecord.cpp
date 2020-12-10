@@ -66,7 +66,7 @@ void CInfoRecord::SaveBin()
 {
 	FILE *fpRead = fopen("Vins.txt", "rb");
 
-	FILE *fpWrite = fopen("Vins.dat", "wb+");
+	FILE *fpWrite = fopen("Vins.dat", "wb");
 
 	char strVin[VIN_LENGTH+1] = {};
 
@@ -81,6 +81,29 @@ void CInfoRecord::SaveBin()
 
 	fclose(fpRead);
 	fclose(fpWrite);
+}
+
+void CInfoRecord::SaveTxt()
+{
+	FILE *fpRead = fopen("Vins.dat", "rb");
+
+	FILE *fpWrite = fopen("Vins.txt", "wb");
+
+	UCHAR chVin[MAX_VEHICLENUM][VIN_LENGTH] = {};
+
+	fseek(fpRead, 0, SEEK_END);
+	long len = ftell(fpRead);
+	fseek(fpRead, 0, SEEK_SET);
+	fread((char*)chVin, 1, len, fpRead);
+	fclose(fpRead);
+
+	UINT nNum = len / VIN_LENGTH;
+
+	for (UINT i=0; i<nNum; i++)
+	{
+
+	}
+	
 }
 
 bool CInfoRecord::ReadVin()

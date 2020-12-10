@@ -28,6 +28,8 @@ public:
 
 	void SaveBin();
 
+	void SaveTxt();
+
 	bool ReadVin();
 
 	void WriteVin();
