@@ -43,6 +43,7 @@
 #define IDC_EDIT_F7_10                  1030
 #define IDC_EDIT_VEHICLESUMTODAY        1030
 #define IDC_EDITVIN                     1030
+#define IDC_EDIT_NUMSUM                 1030
 #define IDC_EDIT_VEHICLEONLINETODAY     1031
 #define IDC_LIST_VINS                   1031
 #define IDC_EDIT_VEHICLEOFFLINETODAY    1032

@@ -159,12 +159,14 @@ LRESULT CMsgHandleDlg::OnRefreshVin(WPARAM wParam, LPARAM lParam)
 LRESULT CMsgHandleDlg::OnRefreshYestoday(WPARAM wParam, LPARAM lParam)
 {
 	m_statistics.OnYestodayRec();
+	m_warning.OnNewDay();
 	return 0;
 }
 
 LRESULT CMsgHandleDlg::OnRefreshLastWeek(WPARAM wParam, LPARAM lParam)
 {
 	m_statistics.OnLastWeekRec();
+	m_warning.OnNewDay();
 	return 0;
 }
 
@@ -222,7 +224,8 @@ BOOL CMsgHandleDlg::OnInitDialog()
 // 	m_voltage.LoadList(this->m_hWnd);
 //	m_warning.LoadList(this->m_hWnd);
 #else
-	CInfoRecord::GetInstance()->SaveBin();
+	//CInfoRecord::GetInstance()->SaveBin();
+	CInfoRecord::GetInstance()->SaveTxt();
 #endif
 
 	CInfoRecord::GetInstance()->SetHwnd(this->m_hWnd);

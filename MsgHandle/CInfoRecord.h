@@ -42,6 +42,8 @@ public:
 
 	void OnParse(char buf[], int len);
 
+	void OnSaveStatistics(WORD wYear, WORD wMonth, WORD wDay);
+
 	void OnStatisticToday(STSTATISTICDATATODAY &stData);
 
 	void OnMileageRank(STMSGMILEAGERANKSEQ &msgSeq);
@@ -75,18 +77,18 @@ public:
 	void InsertVinAndSort(UCHAR pVin[]);
 
 private:
-	UCHAR m_chVinEx[MAX_VEHICLENUM][VIN_LENGTH];
+	
 	UCHAR m_chVin[MAX_VEHICLENUM][VIN_LENGTH]; //每辆车vin码
 	STRECDATA* m_pVehicleRec[MAX_VEHICLENUM];
-	UCHAR m_iCurRecIndex[MAX_VEHICLENUM];
+	
 	UINT m_vehicleNum;
-	UINT m_vehicleNumEx;
+
 	UINT m_alertTimes[MAX_VEHICLENUM][ALERT_CATEGORY_NUM];	//每辆车各类报警次数，0:总报警次数
 
-	UINT m_voltageException[MAX_VEHICLENUM];
-	UINT m_tempException[MAX_VEHICLENUM];
-
-	UINT m_voltageValueTimes[VOLTAGE_CATEGORY_NUM][MAX_VEHICLENUM];
+// 	UINT m_voltageException[MAX_VEHICLENUM];
+// 	UINT m_tempException[MAX_VEHICLENUM];
+// 
+// 	UINT m_voltageValueTimes[VOLTAGE_CATEGORY_NUM][MAX_VEHICLENUM];
 
 	UINT m_warningValueTimes[WARNING_CATEGORY_NUM][MAX_VEHICLENUM];
 

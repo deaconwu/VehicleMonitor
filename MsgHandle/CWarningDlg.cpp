@@ -68,22 +68,22 @@ void CWarningDlg::LoadList(HWND hWnd)
 
 	for (UINT i = 0; i < nLoadNum; i++)
 	{
-	//CString csStr(chVin[i]);
-	m_listVins.InsertItem(i, _T(""));
-	//m_listVins.SetItemText(i, 0, csStr);
-	m_listVins.SetItemState(i, ~LVIS_SELECTED, LVIS_SELECTED);
+		//CString csStr(chVin[i]);
+		m_listVins.InsertItem(i, _T(""));
+		//m_listVins.SetItemText(i, 0, csStr);
+		m_listVins.SetItemState(i, ~LVIS_SELECTED, LVIS_SELECTED);
 	}
 
 	g_nNumLoaded = nLoadNum;
 
 	if (nLeftNum > 0)
 	{
-	UINT nThreadCount = nLeftNum / NUM_VINLOADED_PERTIME + 1;
-	for (UINT i = 0; i < nThreadCount; i++)
-	{
-		DWORD dwThreadId;
-		HANDLE hThread = CreateThread(NULL, NULL, OnLoadCarThread, this->m_hWnd, 0, &dwThreadId);
-	}
+		UINT nThreadCount = nLeftNum / NUM_VINLOADED_PERTIME + 1;
+		for (UINT i = 0; i < nThreadCount; i++)
+		{
+			DWORD dwThreadId;
+			HANDLE hThread = CreateThread(NULL, NULL, OnLoadCarThread, this->m_hWnd, 0, &dwThreadId);
+		}
 	}
 }
 
@@ -104,6 +104,14 @@ void CWarningDlg::OnDestroy()
 		delete m_pDlgHisRec;
 		m_pDlgHisRec = NULL;
 	}
+}
+
+void CWarningDlg::OnNewDay()
+{
+	OnDestroy();
+	m_listVins.DeleteAllItems();
+	((CEdit*)GetDlgItem(IDC_EDIT_NUMSUM))->SetWindowText(_T("0"));
+	CWarningRank::GetInstance()->OnLaunchRank(this->m_hWnd);
 }
 
 void CWarningDlg::NotifyRefreshVin()
@@ -136,6 +144,9 @@ END_MESSAGE_MAP()
 
 LRESULT CWarningDlg::OnGetData(WPARAM wParam, LPARAM lParam)
 {
+	if (g_bStopFlag)
+		return 0;
+
 	STMSGWARNINGRANKSEQ* pMsg = (STMSGWARNINGRANKSEQ*)wParam;
 
 	int count = m_listVins.GetItemCount();
@@ -191,6 +202,10 @@ LRESULT CWarningDlg::OnGetData(WPARAM wParam, LPARAM lParam)
 	}
 
 	m_listVins.SetRedraw(TRUE);
+
+	CString csStr = _T("");
+	csStr.Format(_T("%u"), pMsg->iNum);
+	((CEdit*)GetDlgItem(IDC_EDIT_NUMSUM))->SetWindowText(csStr);
 
 	return 0;
 }

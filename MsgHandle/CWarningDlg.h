@@ -26,6 +26,7 @@ public:
 
 	void OnLauch();
 	void OnDestroy();
+	void OnNewDay();
 
 	void NotifyRefreshVin();
 

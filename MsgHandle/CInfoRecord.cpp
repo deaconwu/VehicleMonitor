@@ -9,7 +9,9 @@
 #include "CRecordLastweek.h"
 
 CInfoRecord* CInfoRecord::m_pInstance = NULL;
-
+UCHAR m_chVinEx[MAX_VEHICLENUM][VIN_LENGTH] = {};
+UINT m_vehicleNumEx = 0;
+UCHAR m_iCurRecIndex[MAX_VEHICLENUM];
 static bool g_bTerminate = false;
 
 static char* g_pMileageRankMem = (char*)malloc(sizeof(STVINMILEAGELINK)*NUM_MILEAGERANK);
@@ -24,7 +26,7 @@ HANDLE g_hMutex = CreateMutex(NULL, FALSE, _T("InfoRecord"));
 
 DWORD WINAPI OnRecThread(LPVOID lparam);
 
-CInfoRecord::CInfoRecord() : m_vehicleNum(0), m_chargeTimes(0), m_chargeSeconds(0), m_vehicleNumEx(0)
+CInfoRecord::CInfoRecord() : m_vehicleNum(0), m_chargeTimes(0), m_chargeSeconds(0)/*, m_vehicleNumEx(0)*/
 {
 	memset(m_chVinEx, 0, sizeof(m_chVinEx));
 	memset(m_chVin, 0, sizeof(m_chVin));
@@ -33,8 +35,8 @@ CInfoRecord::CInfoRecord() : m_vehicleNum(0), m_chargeTimes(0), m_chargeSeconds(
 	memset(m_alertTimes, 0, sizeof(m_alertTimes));
 	memset(m_bTodayJoin, 0, sizeof(m_bTodayJoin));
 	memset(m_sTime, 0, sizeof(m_sTime));
-	memset(m_voltageException, 0, sizeof(m_voltageException));
-	memset(m_tempException, 0, sizeof(m_tempException));
+// 	memset(m_voltageException, 0, sizeof(m_voltageException));
+// 	memset(m_tempException, 0, sizeof(m_tempException));
 	memset(m_warningValueTimes, 0, sizeof(m_warningValueTimes));
 	memset(m_chRefreshVin, 0, sizeof(m_chRefreshVin));
 	memset(g_recMem, 0, SHAREMEM_SIZE);
@@ -45,8 +47,9 @@ void CInfoRecord::OnReset()
 	WaitForSingleObject(g_hMutex, INFINITE);
 	for (UINT i=0; i<m_vehicleNum; i++)
 	{
-		LONGLONG offset = i * RECNUM_PER_VEHICEL * sizeof(STRECDATA);
-		m_pVehicleRec[i] = (STRECDATA*)(g_recMem+offset);
+// 		LONGLONG offset = i * RECNUM_PER_VEHICEL * sizeof(STRECDATA);
+// 		m_pVehicleRec[i] = (STRECDATA*)(g_recMem+offset);
+		m_pVehicleRec[i] = NULL;
 	}
 	
 	memset(m_iCurRecIndex, 0, sizeof(m_iCurRecIndex));
@@ -86,24 +89,31 @@ void CInfoRecord::SaveBin()
 void CInfoRecord::SaveTxt()
 {
 	FILE *fpRead = fopen("Vins.dat", "rb");
-
 	FILE *fpWrite = fopen("Vins.txt", "wb");
 
-	UCHAR chVin[MAX_VEHICLENUM][VIN_LENGTH] = {};
+	UCHAR* pVin = (UCHAR*)malloc(MAX_VEHICLENUM*VIN_LENGTH);
 
 	fseek(fpRead, 0, SEEK_END);
 	long len = ftell(fpRead);
 	fseek(fpRead, 0, SEEK_SET);
-	fread((char*)chVin, 1, len, fpRead);
+	fread((char*)pVin, 1, len, fpRead);
 	fclose(fpRead);
 
 	UINT nNum = len / VIN_LENGTH;
+	char chVin[VIN_LENGTH+1] = {};
 
 	for (UINT i=0; i<nNum; i++)
 	{
-
+		memcpy(chVin, pVin+i*VIN_LENGTH, VIN_LENGTH);
+		fprintf(fpWrite, "%s", chVin);
+		if (i != nNum-1)
+		{
+			fprintf(fpWrite, "\n");
+		}
 	}
-	
+
+	fclose(fpWrite);
+	free(pVin);
 }
 
 bool CInfoRecord::ReadVin()
@@ -158,13 +168,31 @@ void CInfoRecord::WriteVin()
 	if (m_vehicleNumEx <= m_vehicleNum)
 		return;
 
-	FILE *fpWrite = fopen("Vins.dat", "wb");
-// 	for (long i = 0; i < m_vehicleNumEx; i++)
-// 	{
-// 		fprintf(fpWrite, "%s", m_chVinEx[i]);
-// 	}
+	if (m_vehicleNumEx > MAX_VEHICLENUM)
+	{
+		m_vehicleNumEx = MAX_VEHICLENUM;
+	}
 
-	fprintf(fpWrite, "%s", m_chVinEx);
+	FILE *fpWrite = fopen("Vins.dat", "wb");
+
+	UCHAR iNum = 0;
+	for (UCHAR i=0; i<VIN_LENGTH; i++)
+	{
+		if (m_chVinEx[m_vehicleNumEx-1][i] != ' ')
+		{
+			iNum++;
+		}
+	}
+
+	if (iNum==VIN_LENGTH)
+	{
+		fprintf(fpWrite, "%.*s", m_vehicleNumEx*VIN_LENGTH, m_chVinEx);
+	}
+	else
+	{
+		fprintf(fpWrite, "%.*s", (m_vehicleNumEx-1)*VIN_LENGTH, m_chVinEx);
+	}
+
 	fclose(fpWrite);
 }
 
@@ -231,10 +259,23 @@ void CInfoRecord::InsertVinAndSort(UCHAR pVin[])
 		return;
 	}
 
+	UCHAR iNum = 0;
+	UCHAR iAlpha = 0;
 	for (int i = 0; i < VIN_LENGTH; i++)
 	{
 		if (pVin[i] < '0' || (pVin[i] > '9' && pVin[i] < 'A') || (pVin[i] > 'Z' && pVin[i] < 'a') || pVin[i]>'z')
 			return;
+
+		if (pVin[i] >= '0' && pVin[i] <= '9')
+			iNum += 1;
+
+		if ((pVin[i] >= 'A' && pVin[i] <= 'Z') || (pVin[i] >= 'a' && pVin[i] <= 'z'))
+			iAlpha += 1;
+	}
+
+	if (VIN_LENGTH==iNum || VIN_LENGTH==iAlpha)
+	{
+		return;
 	}
 
 	WaitForSingleObject(g_hMutex, INFINITE);
@@ -429,6 +470,9 @@ void CInfoRecord::OnParse(char buf[], int len)
 
 	if (g_datePre.wDay != st.wDay || g_datePre.wMonth != st.wMonth || g_datePre.wYear != st.wYear)
 	{
+		//保存每日统计
+		OnSaveStatistics(g_datePre.wYear, g_datePre.wMonth, g_datePre.wDay);
+
 		//保存每日警报
 		CWarningRank::GetInstance()->OnSaveList(g_datePre.wYear, g_datePre.wMonth, g_datePre.wDay);
 
@@ -577,6 +621,33 @@ void CInfoRecord::OnTerminate()
 {
 	WriteVin();
 	g_bTerminate = true;
+}
+
+void CInfoRecord::OnSaveStatistics(WORD wYear, WORD wMonth, WORD wDay)
+{
+	char strFileName[100] = {};
+	sprintf(strFileName, "Statistics_%d-%d-%d.txt", wYear, wMonth, wDay);
+
+	FILE *fpWrite = fopen(strFileName, "wb+");
+	if (NULL == fpWrite)
+	{
+		return;
+	}
+
+	STSTATISTICDATATODAY stData = {};
+	CInfoRecord::GetInstance()->OnStatisticToday(stData);
+
+	fprintf(fpWrite, "接入车辆数: %u\n", stData.iJoin);
+	fprintf(fpWrite, "在线车辆数: %u\n", stData.iOnline);
+	fprintf(fpWrite, "离线车辆数: %u\n", stData.iOffline);
+	fprintf(fpWrite, "故障车辆数: %u\n", stData.iFault);
+	fprintf(fpWrite, "充电车辆数: %u\n\n", stData.iRecharge);
+	fprintf(fpWrite, "累计行驶里程: %.5f\n", (long double)stData.iMileageSum / 10 / 10000);
+	fprintf(fpWrite, "累计碳减排: %.4f\n", (0.0031 / 6) * ((long double)stData.iMileageSum / 10 / 10000));
+	fprintf(fpWrite, "累计节油量: %.2f\n", (1.75 / 6) * ((long double)stData.iMileageSum / 10 / 10000));
+	fprintf(fpWrite, "累计耗电量: %.2f\n", (5.68 / 6) * ((long double)stData.iMileageSum / 10 / 10000));
+
+	fclose(fpWrite);
 }
 
 void CInfoRecord::OnStatisticToday(STSTATISTICDATATODAY &stData)
@@ -804,14 +875,14 @@ void CInfoRecord::OnAlert(STALERTDATA &stData)
 	for (UINT i = 0; i < m_vehicleNum; i++)
 	{
 		stData.iAlertTimes[i] = m_alertTimes[i][0];
-		stData.iVoltageException[i] = m_voltageException[i];
-		stData.iTempException[i] = m_tempException[i];
+// 		stData.iVoltageException[i] = m_voltageException[i];
+// 		stData.iTempException[i] = m_tempException[i];
 	}
 }
 
 void CInfoRecord::OnVoltage(STVOLTAGEDATA &stData)
 {
-	memcpy(&stData, m_voltageValueTimes, sizeof(STVOLTAGEDATA));
+//	memcpy(&stData, m_voltageValueTimes, sizeof(STVOLTAGEDATA));
 }
 
 void CInfoRecord::OnWarning(STWARNINGDATA &stData)
