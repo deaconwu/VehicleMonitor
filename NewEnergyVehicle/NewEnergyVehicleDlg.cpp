@@ -257,7 +257,7 @@ BOOL CNewEnergyVehicleDlg::OnInitDialog()
 	GetDlgItem(IDC_STATIC)->ShowWindow(SW_HIDE);
 
 	//如果数据库和表不存在就创建：步骤、执行状态(0开始执行、1已退出、2等待完成)、执行时间
-	strcpy(g_sqliteLog.sqlCmd, "create table step_log(stepIndex INTEGER PRIMARY KEY AUTOINCREMENT, state INTEGER NOT NULL,operateTime BLOB NOT NULL);");
+	strcpy(g_sqliteLog.sqlCmd, "create table step_log(stepIndex INTEGER NOT NULL, state INTEGER NOT NULL, operateTime BLOB NOT NULL);");
 	sqlite3_exec_cmd(&g_sqliteLog);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
