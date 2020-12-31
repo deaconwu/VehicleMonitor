@@ -21,6 +21,11 @@ void FilterConfig(char* pDst, const char* pSrc)
 
 void Str2Time(SYSTEMTIME& stTime, const char* pTimeStr, bool bDateOnly)
 {
+	if (*pTimeStr == '\0')
+	{
+		return;
+	}
+
 	const char* pTmp = pTimeStr;
 	char chYear[5] = {};
 	unsigned char iIndex = 0;
