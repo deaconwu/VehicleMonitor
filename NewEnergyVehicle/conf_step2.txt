@@ -1,0 +1,8 @@
+数据入库时间: "2020-12-31"
+原始数据文件路径: "C:\Program Files (x86)\InstallShield Installation Information\{E983CAF8-B0F4-41B5-B2B4-267EE80FE520}"
+FK文件存放路径: "E:\native-cpp-hbase-client-master\hbase\testing"
+国标数据存放路径: "F:\curlsmtp-master"
+RVT数据存放路径: "E:\thrift_hbase_putget\x64\Release"
+DtVFb数据存放路径: "F:\TestDir_13454281_22276"
+TzTFb数据存放路: "E:\新能源汽车大数据谱系之动力电池谱"
+入库执行时间: "2021-01-02 00:00:00"
