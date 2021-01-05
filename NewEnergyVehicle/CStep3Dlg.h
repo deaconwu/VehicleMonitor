@@ -14,6 +14,8 @@ public:
 
 	bool CheckConfigComplete();
 
+	void FetchConfigDataDate(SYSTEMTIME& stDate);
+
 	void FetchConfigExcuteDateTime(SYSTEMTIME& stDate);
 
 	void InputStep2DateTime(SYSTEMTIME& stDate) { memcpy(&m_step2DateTime, &stDate, sizeof(SYSTEMTIME)); }
@@ -23,6 +25,8 @@ public:
 	bool CheckConfigExcuteDateTimeValid();	//常态化点名执行时间判断
 
 	time_t FetchExcuteTimeElapse();
+
+	void FetchTransParam(char* pStrParam);
 
 	void DisableCtrl();
 

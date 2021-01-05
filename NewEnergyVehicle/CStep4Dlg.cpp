@@ -145,6 +145,24 @@ void CStep4Dlg::ExcutePost()
 
 	//上传完成，再周期触发数据入库、常态化点名、数据上传
 	::PostMessage(m_hPWnd, UM_HTTPPOSTEND, NULL, NULL);
+
+	//移动文件
+	SHFILEOPSTRUCT FileOp;
+	ZeroMemory((void*)&FileOp, sizeof(SHFILEOPSTRUCT));
+
+	int nLengthFrm = strlen(m_stepConfig.ch_1);
+	char *NewPathFrm = new char[nLengthFrm + 2];
+	strcpy(NewPathFrm, m_stepConfig.ch_1);
+	strcat(NewPathFrm, "\\*.txt\0");
+
+	FileOp.fFlags = FOF_NOCONFIRMATION | FOF_FILESONLY;
+	FileOp.hNameMappings = NULL;
+	FileOp.hwnd = NULL;
+	FileOp.lpszProgressTitle = NULL;
+	FileOp.pFrom = NewPathFrm;
+	FileOp.pTo = "F:\\VSProject\\NewEnergyVehicle\\To";
+	FileOp.wFunc = FO_MOVE;
+	SHFileOperation(&FileOp);
 }
 
 BEGIN_MESSAGE_MAP(CStep4Dlg, CDialogEx)

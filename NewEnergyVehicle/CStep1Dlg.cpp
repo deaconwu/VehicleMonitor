@@ -223,6 +223,15 @@ void CStep1Dlg::FetchConfigDate(SYSTEMTIME& stDate)
 	Str2Time(stDate, m_stepConfig.ch_5);
 }
 
+void CStep1Dlg::FetchTransParam(char* pStrParam)
+{
+	strcat(pStrParam, m_stepConfig.ch_0);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_1);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_2);
+}
+
 void CStep1Dlg::OnBnClickedBtnStep1Next()
 {
 	// TODO: 在此添加控件通知处理程序代码

@@ -28,6 +28,16 @@ void CNewEnergyVehicleDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 }
 
+void CNewEnergyVehicleDlg::KillAllTimer()
+{
+	KillTimer(TIMER_ID_STEP1_START);
+	KillTimer(TIMER_ID_STEP2_START);
+	KillTimer(TIMER_ID_STEP3_START);
+	KillTimer(TIMER_ID_STEP3_START);
+	KillTimer(TIMER_ID_STEP2_ENDCHECK);
+	KillTimer(TIMER_ID_STEP3_ENDCHECK);
+}
+
 BEGIN_MESSAGE_MAP(CNewEnergyVehicleDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -177,6 +187,10 @@ LRESULT CNewEnergyVehicleDlg::OnLoadStep3End(WPARAM wParam, LPARAM lParam)
 
 LRESULT CNewEnergyVehicleDlg::OnHttpPostEnd(WPARAM wParam, LPARAM lParam)
 {
+	//计算下一周期数据日期
+	CalcNextDateTime(m_dataDateStep2);
+	CalcNextDateTime(m_dataDateStep3);
+
 	//计算下一周期执行时间
 	CalcNextDateTime(m_dateTimeStep2);
 	time_t tStep2 = ConvertSecondsTime(m_dateTimeStep2);
@@ -256,8 +270,8 @@ BOOL CNewEnergyVehicleDlg::OnInitDialog()
 
 	GetDlgItem(IDC_STATIC)->ShowWindow(SW_HIDE);
 
-	//如果数据库和表不存在就创建：步骤、执行状态(0开始执行、1已退出、2等待完成)、执行时间
-	strcpy(g_sqliteLog.sqlCmd, "create table step_log(stepIndex INTEGER NOT NULL, state INTEGER NOT NULL, operateTime BLOB NOT NULL);");
+	//如果数据库和表不存在就创建：步骤、执行程序名、执行状态(0开始执行、1已退出、2等待完成)、执行时间
+	strcpy(g_sqliteLog.sqlCmd, "create table step_log(stepIndex INTEGER NOT NULL, programName TEXT NOT NULL, state INTEGER NOT NULL, operateTime BLOB NOT NULL);");
 	sqlite3_exec_cmd(&g_sqliteLog);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -462,6 +476,9 @@ void CNewEnergyVehicleDlg::OnBnClickedBtnLaunch()
 	m_step3Dlg.FetchConfigExcuteDateTime(m_dateTimeStep3);
 	m_step4Dlg.FetchConfigExcuteDateTime(m_dateTimeStep4);
 
+	m_step2Dlg.FetchConfigDataDate(m_dataDateStep2);
+	m_step3Dlg.FetchConfigDataDate(m_dataDateStep3);
+
 	SetTimer(TIMER_ID_STEP1_START, tElapse1 * 1000, NULL);	//最后一个填NULL，默认回调OnTimer
 
 	//SetTimer(TIMER_ID_STEP2_START, tElapse2 * 1000, NULL);
@@ -501,8 +518,11 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 			eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 		sqlite3_exec_cmd(&g_sqliteLog);
 
+		char param[512] = {};
+		m_step1Dlg.FetchTransParam(param);
+
 		//数据收发一直运行
-		ShellExecute(0, "open", "F:\\VSProject\\VehicleInfo\\x64\\Debug\\VehicleInfo.exe", "", "", SW_SHOWNORMAL);
+		ShellExecute(0, "open", "Port_2GB.EXE", param, "", SW_SHOWNORMAL);
 	}
 	else if (nIDEvent == TIMER_ID_STEP2_START)
 	{
@@ -512,8 +532,12 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 			eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 		sqlite3_exec_cmd(&g_sqliteLog);
 
+		char param[512] = {};
+		sprintf(param, "%02u %02u %02u", m_dataDateStep2.wYear, m_dataDateStep2.wMonth, m_dataDateStep2.wDay);
+		m_step2Dlg.FetchTransParam(param);
+
 		//执行数据入库
-		ShellExecute(0, "open", "F:\\duilib\\VehicleDuilibMfc\\x64\\Release\\VehicleDuilibMfc.exe", "", "", SW_SHOWNORMAL);
+		ShellExecute(0, "open", "F:\\duilib\\VehicleDuilibMfc\\x64\\Release\\VehicleDuilibMfc.exe", param, "", SW_SHOWNORMAL);
 	}
 	else if (nIDEvent == TIMER_ID_STEP3_START || nIDEvent == TIMER_ID_STEP2_ENDCHECK)
 	{
@@ -532,6 +556,10 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
+
+			char param[512] = {};
+			sprintf(param, "%02u %02u %02u", m_dataDateStep3.wYear, m_dataDateStep3.wMonth, m_dataDateStep3.wDay);
+			m_step3Dlg.FetchTransParam(param);
 
 			//已完成入库，执行常态化点名
 			ShellExecute(0, "open", "F:\\sqlite\\sqlite3.exe", "", "", SW_SHOWNORMAL);

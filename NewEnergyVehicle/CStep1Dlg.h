@@ -20,6 +20,8 @@ public:
 
 	void FetchConfigDate(SYSTEMTIME& stDate);
 
+	void FetchTransParam(char* pStrParam);
+
 	void DisableCtrl();
 
 // 对话框数据

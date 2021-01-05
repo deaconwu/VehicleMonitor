@@ -18,9 +18,13 @@ public:
 
 	bool CheckConfigExcuteDateTimeValid();	//入库执行时间判断
 
+	void FetchConfigDataDate(SYSTEMTIME& stDate);
+
 	void FetchConfigExcuteDateTime(SYSTEMTIME& stDate);
 
 	time_t FetchExcuteTimeElapse();
+
+	void FetchTransParam(char* pStrParam);
 
 	void DisableCtrl();
 

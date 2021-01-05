@@ -95,9 +95,31 @@ LRESULT CStep2Dlg::OnLoadConfig(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+void CStep2Dlg::FetchConfigDataDate(SYSTEMTIME& stDate)
+{
+	Str2Time(stDate, m_stepConfig.ch_0, true);
+}
+
 void CStep2Dlg::FetchConfigExcuteDateTime(SYSTEMTIME& stDate)
 {
 	Str2Time(stDate, m_stepConfig.ch_7);
+}
+
+void CStep2Dlg::FetchTransParam(char* pStrParam)
+{
+	strcat(pStrParam, m_stepConfig.ch_0);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_1);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_2);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_3);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_4);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_5);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_6);
 }
 
 time_t CStep2Dlg::FetchExcuteTimeElapse()

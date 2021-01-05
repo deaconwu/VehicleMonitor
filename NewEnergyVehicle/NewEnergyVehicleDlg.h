@@ -17,14 +17,15 @@ class CNewEnergyVehicleDlg : public CDialogEx
 public:
 	CNewEnergyVehicleDlg(CWnd* pParent = nullptr);	// 标准构造函数
 
+	void KillAllTimer();
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_NEWENERGYVEHICLE_DIALOG };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
-
 
 // 实现
 protected:
@@ -55,6 +56,10 @@ private:
 	CStep2Dlg m_step2Dlg;
 	CStep3Dlg m_step3Dlg;
 	CStep4Dlg m_step4Dlg;
+
+	//每周期的数据日期
+	SYSTEMTIME m_dataDateStep2;
+	SYSTEMTIME m_dataDateStep3;
 
 	//每周期的执行时间
 	SYSTEMTIME m_dateTimeStep2;

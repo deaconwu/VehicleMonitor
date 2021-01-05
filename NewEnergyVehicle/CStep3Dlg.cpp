@@ -412,6 +412,11 @@ bool CStep3Dlg::CheckConfigComplete()
 	return (strlen(m_stepConfig.ch_1) > 0) && (strlen(m_stepConfig.ch_2) > 0) && (strlen(m_stepConfig.ch_3) > 0) && (strlen(m_stepConfig.ch_4) > 0) && (strlen(m_stepConfig.ch_5) > 0) && (strlen(m_stepConfig.ch_6) > 0) && (m_stepConfig.ch_8 > 0);
 }
 
+void CStep3Dlg::FetchConfigDataDate(SYSTEMTIME& stDate)
+{
+	Str2Time(stDate, m_stepConfig.ch_0, true);
+}
+
 void CStep3Dlg::FetchConfigExcuteDateTime(SYSTEMTIME& stDate)
 {
 	Str2Time(stDate, m_stepConfig.ch_7);
@@ -513,6 +518,23 @@ bool CStep3Dlg::CheckConfigExcuteDateTimeValid()
 	}
 
 	return true;
+}
+
+void CStep3Dlg::FetchTransParam(char* pStrParam)
+{
+	strcat(pStrParam, m_stepConfig.ch_0);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_1);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_2);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_3);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_4);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_5);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_6);
 }
 
 time_t CStep3Dlg::FetchExcuteTimeElapse()

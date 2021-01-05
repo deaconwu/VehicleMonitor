@@ -202,7 +202,7 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 
 	CURL *curl = curl_easy_init();
 
-	curlCode = curl_easy_setopt(curl, CURLOPT_URL, "http://10.130.161.40:8096/analysis/file");
+	curlCode = curl_easy_setopt(curl, CURLOPT_URL, "http://10.130.168.128:8096/analysis/file");
 
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, "ANALYSIS-CALL-TOKEN:jfu349fh9w8fJDWEEjcmwiefm38fjmcdiowe");
