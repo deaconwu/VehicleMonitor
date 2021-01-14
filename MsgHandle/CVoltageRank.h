@@ -3,7 +3,6 @@
 class CVoltageRank
 {
 public:
-	CVoltageRank() {}
 	~CVoltageRank() {}
 
 	static CVoltageRank* GetInstance()
@@ -23,6 +22,7 @@ public:
 	void OnSaveList(WORD wYear, WORD wMonth, WORD wDay);
 
 private:
+	CVoltageRank() {}
 
 	HANDLE m_hThread;
 	static CVoltageRank* m_pInstance;

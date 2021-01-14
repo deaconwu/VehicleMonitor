@@ -5,18 +5,15 @@
 class CRecordYestoday
 {
 public:
-	CRecordYestoday() : m_joinNum(0), m_chargeNum(0), m_chargeTimes(0), m_chargeSeconds(0)
-	{
-
-	}
 
 	~CRecordYestoday()
 	{
-		if (NULL != m_pInstance)
-		{
-			delete m_pInstance;
-			m_pInstance = NULL;
-		}
+		//实例常驻内存，存在于进程的生命周期，无需手动释放
+// 		if (NULL != m_pInstance)
+// 		{
+// 			delete m_pInstance;
+// 			m_pInstance = NULL;
+// 		}
 	}
 
 	static CRecordYestoday* GetInstance()
@@ -53,6 +50,11 @@ public:
 	}
 
 private:
+
+	CRecordYestoday() : m_joinNum(0), m_chargeNum(0), m_chargeTimes(0), m_chargeSeconds(0)
+	{
+
+	}
 
 	UINT m_joinNum;
 	UINT m_chargeNum;

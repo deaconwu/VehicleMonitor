@@ -3,7 +3,7 @@
 class CWarningRank
 {
 public:
-	CWarningRank() {}
+
 	~CWarningRank() {}
 
 	static CWarningRank* GetInstance()
@@ -23,6 +23,7 @@ public:
 	void OnSaveList(WORD wYear, WORD wMonth, WORD wDay);
 
 private:
+	CWarningRank() {}
 
 	HANDLE m_hThread;
 	static CWarningRank* m_pInstance;

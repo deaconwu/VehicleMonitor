@@ -5,18 +5,15 @@
 class CRecordLastweek
 {
 public:
-	CRecordLastweek() : m_iOnline(0), m_iOffline(0), m_iFault(0), m_iRecharge(0), m_iUnlocated(0)
-	{
-
-	}
 
 	~CRecordLastweek()
 	{
-		if (NULL != m_pInstance)
-		{
-			delete m_pInstance;
-			m_pInstance = NULL;
-		}
+		//实例常驻内存，存在于进程的生命周期，无需手动释放
+// 		if (NULL != m_pInstance)
+// 		{
+// 			delete m_pInstance;
+// 			m_pInstance = NULL;
+// 		}
 	}
 
 	static CRecordLastweek* GetInstance()
@@ -55,6 +52,12 @@ public:
 	}
 
 private:
+
+	CRecordLastweek() : m_iOnline(0), m_iOffline(0), m_iFault(0), m_iRecharge(0), m_iUnlocated(0)
+	{
+
+	}
+
 	UINT m_iOnline;
 	UINT m_iOffline;
 	UINT m_iFault;

@@ -42,6 +42,23 @@ CInfoRecord::CInfoRecord() : m_vehicleNum(0), m_chargeTimes(0), m_chargeSeconds(
 	memset(g_recMem, 0, SHAREMEM_SIZE);
 }
 
+CInfoRecord* CInfoRecord::GetInstance()
+{
+	//懒汉式单例模式
+	if (NULL == m_pInstance)	//每次上锁存在性能问题，导致线程阻塞；已有实例，直接返回
+	{
+		//保证线程安全，避免都判断实例不存在，都会进行实例化
+		WaitForSingleObject(g_hMutex, INFINITE);
+		if (NULL == m_pInstance)
+		{
+			m_pInstance = new CInfoRecord;
+		}
+		ReleaseMutex(g_hMutex);
+	}
+
+	return m_pInstance;
+}
+
 void CInfoRecord::OnReset()
 {
 	WaitForSingleObject(g_hMutex, INFINITE);
@@ -255,6 +272,11 @@ INT CInfoRecord::FindVinPosEx(UCHAR pVin[])
 void CInfoRecord::InsertVinAndSort(UCHAR pVin[])
 {
 	if (m_vehicleNumEx >= MAX_VEHICLENUM)
+	{
+		return;
+	}
+
+	if (pVin[0] >= '0' && pVin[0] <= '9')
 	{
 		return;
 	}

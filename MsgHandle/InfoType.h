@@ -4,7 +4,7 @@
 #define BUFFER_SIZE 2000
 #define MAX_FILE_SIZE 5000*79+4
 #define VIN_LENGTH	17
-#define MAX_VEHICLENUM 800000
+#define MAX_VEHICLENUM 500000
 #define RECNUM_PER_VEHICEL 64	//每辆车最多保留64条RecData
 #define SHAREMEM_SIZE MAX_VEHICLENUM * RECNUM_PER_VEHICEL * sizeof(STRECDATA)
 #define ALERT_CATEGORY_NUM 20
@@ -59,7 +59,7 @@ typedef struct RecData
 	UCHAR F6_7;       // 11__最低温度值 52
 
 	//报警数据
-	UINT F7_0; // 56
+	UINT F7_0;		// 56
 
 	//时间数据
 	UCHAR F8[6];    //年月日时分秒 62

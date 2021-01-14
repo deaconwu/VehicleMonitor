@@ -6,14 +6,14 @@
 class CHistoryRecord
 {
 public:
-	CHistoryRecord();
 	~CHistoryRecord()
 	{
-		if (NULL != m_pInstance)
-		{
-			delete m_pInstance;
-			m_pInstance = NULL;
-		}
+		//实例常驻内存，存在于进程的生命周期，无需手动释放
+// 		if (NULL != m_pInstance)
+// 		{
+// 			delete m_pInstance;
+// 			m_pInstance = NULL;
+// 		}
 	}
 
 	static CHistoryRecord* GetInstance()
@@ -25,6 +25,7 @@ public:
 	}
 
 private:
+	CHistoryRecord();
 
 	//上周数据
 	long m_vehicleNumLastWeek;

@@ -6,23 +6,17 @@
 class CInfoRecord
 {
 public:
-	CInfoRecord();
 	~CInfoRecord()
 	{
-		if (NULL != m_pInstance)
-		{
-			delete m_pInstance;
-			m_pInstance = NULL;
-		}
+		//实例常驻内存，存在于进程的生命周期，无需手动释放
+// 		if (NULL != m_pInstance)
+// 		{
+// 			delete m_pInstance;
+// 			m_pInstance = NULL;
+// 		}
 	}
 
-	static CInfoRecord* GetInstance()
-	{
-		if (NULL == m_pInstance)
-			m_pInstance = new CInfoRecord;
-
-		return m_pInstance;
-	}
+	static CInfoRecord* GetInstance();
 
 	void OnReset();
 
@@ -77,6 +71,7 @@ public:
 	void InsertVinAndSort(UCHAR pVin[]);
 
 private:
+	CInfoRecord();
 	
 	UCHAR m_chVin[MAX_VEHICLENUM][VIN_LENGTH]; //每辆车vin码
 	STRECDATA* m_pVehicleRec[MAX_VEHICLENUM];
