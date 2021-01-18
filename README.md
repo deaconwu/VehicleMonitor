@@ -29,6 +29,7 @@
 	
 9. NewEnergyVehicle
     实现新能源风险车，分步执行程序数据收发、数据入库、常态化点名、数据上传。
+	用户登录模块，账号和密码MD5的存储使用xml，下载 https://sourceforge.net/projects/tinyxml/ ，编译生成tinyxml.lib
 	配置内容存放、周期触发执行程序、接入本地数据库记录日志
 	接入http上传的代码"HttpPost"
 	测试可执行程序的启动和退出
