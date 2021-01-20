@@ -29,6 +29,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	BOOL PreTranslateMessage(MSG* pMsg);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedBtnLaunch();
