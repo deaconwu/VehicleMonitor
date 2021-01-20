@@ -19,6 +19,8 @@ public:
 
 	void KillAllTimer();
 
+	void KillAttachProcess();
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_NEWENERGYVEHICLE_DIALOG };

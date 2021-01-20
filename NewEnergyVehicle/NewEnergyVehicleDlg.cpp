@@ -38,6 +38,19 @@ void CNewEnergyVehicleDlg::KillAllTimer()
 	KillTimer(TIMER_ID_STEP3_ENDCHECK);
 }
 
+void CNewEnergyVehicleDlg::KillAttachProcess()
+{
+	DWORD dwProcess = GetProcessidFromName("Port_2GB.exe");
+	if (dwProcess > 0)
+	{
+		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
+		if (NULL != hProcess)
+		{
+			TerminateProcess(hProcess, 0);
+		}
+	}
+}
+
 BEGIN_MESSAGE_MAP(CNewEnergyVehicleDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -250,10 +263,6 @@ BOOL CNewEnergyVehicleDlg::OnInitDialog()
 	m_step4Dlg.SetHwnd(this->m_hWnd);
 	m_step4Dlg.ShowWindow(SW_HIDE);
 
-// 	rect.top += 15;
-// 	rect.bottom += 15;
-// 	rect.left += 45;
-// 	rect.right += 45;
 	m_loginDlg.Create(IDD_LOGIN, this);
 	m_loginDlg.MoveWindow(rect);
 	m_loginDlg.SetHwnd(this->m_hWnd);
@@ -508,6 +517,16 @@ void CNewEnergyVehicleDlg::OnBnClickedBtnLaunch()
 void CNewEnergyVehicleDlg::OnBnClickedBtnQuit()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	DWORD dwProcess = GetProcessidFromName("Port_2GB.exe");
+	if (dwProcess > 0)
+	{
+		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
+		if (NULL != hProcess)
+		{
+			TerminateProcess(hProcess, 0);
+		}
+	}
+
 	PostMessage(WM_QUIT, 0, 0);
 }
 
@@ -533,7 +552,7 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 		m_step1Dlg.FetchTransParam(param);
 
 		//数据收发一直运行
-		ShellExecute(0, "open", "Port_2GB.EXE", param, "", SW_SHOWNORMAL);
+		ShellExecute(0, "open", "Port_2GB.exe", param, "", SW_SHOWNORMAL);
 	}
 	else if (nIDEvent == TIMER_ID_STEP2_START)
 	{
@@ -548,12 +567,12 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 		m_step2Dlg.FetchTransParam(param);
 
 		//执行数据入库
-		ShellExecute(0, "open", "CoreExe.EXE", param, "", SW_SHOWNORMAL);
+		ShellExecute(0, "open", "CoreExe.exe", param, "", SW_SHOWNORMAL);
 	}
 	else if (nIDEvent == TIMER_ID_STEP3_START || nIDEvent == TIMER_ID_STEP2_ENDCHECK)
 	{
 		//检测数据入库是否完成
-		DWORD dwProcess = GetProcessidFromName("CoreExe.EXE");
+		DWORD dwProcess = GetProcessidFromName("CoreExe.exe");
 		if (dwProcess == 0)
 		{
 			//sqlite日志记录数据入库完成
@@ -588,7 +607,7 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 // 				}
 // 			}
 
-			ShellExecute(0, "open", "Call0.EXE", param, "", SW_SHOWNORMAL);
+			ShellExecute(0, "open", "Call0.exe", param, "", SW_SHOWNORMAL);
 		}
 		else
 		{
@@ -604,14 +623,14 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 	else if (nIDEvent == TIMER_ID_STEP4_START || nIDEvent == TIMER_ID_STEP3_ENDCHECK)
 	{
-		DWORD dwProcess2 = GetProcessidFromName("CoreExe.EXE");
+		DWORD dwProcess2 = GetProcessidFromName("CoreExe.exe");
 
 		//检测常态化点名是否完成
 // 		DWORD dwProcess3 = 0;
 // 		for (UINT i = 0; i <= 21; i++)
 // 		{
 // 			char chExe[20] = {};
-// 			sprintf(chExe, "Call%u.EXE", i);
+// 			sprintf(chExe, "Call%u.exe", i);
 // 			dwProcess3 = GetProcessidFromName(chExe);
 // 			if (dwProcess3 > 0)
 // 			{
