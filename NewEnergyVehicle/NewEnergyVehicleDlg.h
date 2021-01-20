@@ -36,6 +36,8 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 
+	BOOL PreTranslateMessage(MSG* pMsg);
+
 	LRESULT OnLoginIn(WPARAM wParam, LPARAM lParam);
 	LRESULT OnStep1(WPARAM wParam, LPARAM lParam);
 	LRESULT OnStep2(WPARAM wParam, LPARAM lParam);

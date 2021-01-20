@@ -313,6 +313,17 @@ HCURSOR CNewEnergyVehicleDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+BOOL CNewEnergyVehicleDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE)
+		return TRUE;
+
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+		return TRUE;
+
+	return CDialog::PreTranslateMessage(pMsg);
+}
+
 void CNewEnergyVehicleDlg::OnBnClickedRadio1()
 {
 	// TODO: 在此添加控件通知处理程序代码
@@ -410,31 +421,31 @@ void CNewEnergyVehicleDlg::OnBnClickedBtnLaunch()
 
 	if (!m_step2Dlg.CheckConfigEnterDateValid())
 	{
-		MessageBox(_T("入库数据日期错误！"), _T("提示"), MB_OK);
+		MessageBox(_T("入库数据日期不能早于接收日期！"), _T("提示"), MB_OK);
 		return;
 	}
 
 	if (!m_step2Dlg.CheckConfigExcuteDateTimeValid())
 	{
-		MessageBox(_T("入库执行时间错误！"), _T("提示"), MB_OK);
+		MessageBox(_T("入库执行时间不能早于入库数据日期！"), _T("提示"), MB_OK);
 		return;
 	}
 
 	if (!m_step3Dlg.CheckConfigEnterDateValid())
 	{
-		MessageBox(_T("常态化点名数据日期错误！"), _T("提示"), MB_OK);
+		MessageBox(_T("常态化点名数据日期不能早于接收日期！"), _T("提示"), MB_OK);
 		return;
 	}
 
 	if (!m_step3Dlg.CheckConfigExcuteDateTimeValid())
 	{
-		MessageBox(_T("常态化点名执行时间错误！"), _T("提示"), MB_OK);
+		MessageBox(_T("常态化点名执行时间不能早于点名数据日期！"), _T("提示"), MB_OK);
 		return;
 	}
 
 	if (!m_step4Dlg.CheckConfigExcuteDateTimeValid())
 	{
-		MessageBox(_T("上传执行时间错误！"), _T("提示"), MB_OK);
+		MessageBox(_T("上传执行时间不能早于常态化点名执行时间！"), _T("提示"), MB_OK);
 		return;
 	}
 
@@ -487,7 +498,7 @@ void CNewEnergyVehicleDlg::OnBnClickedBtnLaunch()
 
 	//SetTimer(TIMER_ID_STEP3_START, tElapse3 * 1000, NULL);
 
-	SetTimer(TIMER_ID_STEP3_START, (tElapse1+20) * 1000, NULL);
+	SetTimer(TIMER_ID_STEP3_START, (tElapse1 + 20) * 1000, NULL);
 
 	//SetTimer(TIMER_ID_STEP4_START, tElapse4 * 1000, NULL);
 
@@ -533,16 +544,16 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 		sqlite3_exec_cmd(&g_sqliteLog);
 
 		char param[512] = {};
-		sprintf(param, "%02u %02u %02u", m_dataDateStep2.wYear, m_dataDateStep2.wMonth, m_dataDateStep2.wDay);
+		sprintf(param, "%02u %02u %02u ", m_dataDateStep2.wYear, m_dataDateStep2.wMonth, m_dataDateStep2.wDay);
 		m_step2Dlg.FetchTransParam(param);
 
 		//执行数据入库
-		ShellExecute(0, "open", "F:\\duilib\\VehicleDuilibMfc\\x64\\Release\\VehicleDuilibMfc.exe", param, "", SW_SHOWNORMAL);
+		ShellExecute(0, "open", "CoreExe.EXE", param, "", SW_SHOWNORMAL);
 	}
 	else if (nIDEvent == TIMER_ID_STEP3_START || nIDEvent == TIMER_ID_STEP2_ENDCHECK)
 	{
 		//检测数据入库是否完成
-		DWORD dwProcess = GetProcessidFromName("VehicleDuilibMfc.exe");
+		DWORD dwProcess = GetProcessidFromName("CoreExe.EXE");
 		if (dwProcess == 0)
 		{
 			//sqlite日志记录数据入库完成
@@ -551,18 +562,33 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
-			//sqlite日志记录执行常态化点名
+			//sqlite日志记录常态化点名执行
 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
 			char param[512] = {};
-			sprintf(param, "%02u %02u %02u", m_dataDateStep3.wYear, m_dataDateStep3.wMonth, m_dataDateStep3.wDay);
+			sprintf(param, "%02u_%02u_%02u ", m_dataDateStep3.wYear, m_dataDateStep3.wMonth, m_dataDateStep3.wDay);
 			m_step3Dlg.FetchTransParam(param);
 
-			//已完成入库，执行常态化点名
-			ShellExecute(0, "open", "F:\\sqlite\\sqlite3.exe", "", "", SW_SHOWNORMAL);
+			//已完成入库，开始执行常态化点名
+// 			for (UINT i=0; i<=21; i++)
+// 			{
+// 				if (m_step3Dlg.CheckSelect(i))
+// 				{
+// 					char chExe[20] = {};
+// 					sprintf(chExe, "Call%u.EXE", i);
+// 					ShellExecute(0, "open", chExe, param, "", SW_SHOWNORMAL);
+// 					dwProcess = GetProcessidFromName(chExe);
+// 					while (dwProcess > 0)
+// 					{
+// 						dwProcess = GetProcessidFromName(chExe);
+// 					}
+// 				}
+// 			}
+
+			ShellExecute(0, "open", "Call0.EXE", param, "", SW_SHOWNORMAL);
 		}
 		else
 		{
@@ -578,9 +604,52 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 	else if (nIDEvent == TIMER_ID_STEP4_START || nIDEvent == TIMER_ID_STEP3_ENDCHECK)
 	{
+		DWORD dwProcess2 = GetProcessidFromName("CoreExe.EXE");
+
 		//检测常态化点名是否完成
-		DWORD dwProcess2 = GetProcessidFromName("VehicleDuilibMfc.exe");
-		DWORD dwProcess3 = GetProcessidFromName("sqlite3.exe");
+// 		DWORD dwProcess3 = 0;
+// 		for (UINT i = 0; i <= 21; i++)
+// 		{
+// 			char chExe[20] = {};
+// 			sprintf(chExe, "Call%u.EXE", i);
+// 			dwProcess3 = GetProcessidFromName(chExe);
+// 			if (dwProcess3 > 0)
+// 			{
+// 				//常态化点名未完成
+// 				break;
+// 			}
+// 		}
+// 
+// 		if (dwProcess2 > 0 || dwProcess3 > 0)
+// 		{
+// 			//sqlite日志记录等待常态化点名完成
+// 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+// 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+// 				eStepState_Wait, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+// 			sqlite3_exec_cmd(&g_sqliteLog);
+// 
+// 			//未完成常态化点名，间隔1秒检查常态化点名是否完成
+// 			SetTimer(TIMER_ID_STEP3_ENDCHECK, 1000, NULL);
+// 		}
+// 		else
+// 		{
+// 			//sqlite日志记录常态化点名完成
+// 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+// 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+// 				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+// 			sqlite3_exec_cmd(&g_sqliteLog);
+// 
+// 			//sqlite日志记录数据上传执行
+// 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+// 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+// 				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+// 			sqlite3_exec_cmd(&g_sqliteLog);
+// 
+// 			//已完成常态化点名，开始执行数据上传
+// 			m_step4Dlg.ExcutePost();
+// 		}
+
+		DWORD dwProcess3 = GetProcessidFromName("DtVtb.EXE");
 		if (dwProcess2 == 0 && dwProcess3 == 0)
 		{
 			//sqlite日志记录常态化点名完成
@@ -589,13 +658,13 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
-			//sqlite日志记录执行数据上传
+			//sqlite日志记录数据上传执行
 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
-			//已完成常态化点名，执行数据上传
+			//已完成常态化点名，开始执行数据上传
 			m_step4Dlg.ExcutePost();
 		}
 		else

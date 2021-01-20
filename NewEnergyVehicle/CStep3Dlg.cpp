@@ -522,19 +522,11 @@ bool CStep3Dlg::CheckConfigExcuteDateTimeValid()
 
 void CStep3Dlg::FetchTransParam(char* pStrParam)
 {
-	strcat(pStrParam, m_stepConfig.ch_0);
-	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_1);
 	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_2);
 	strcat(pStrParam, " ");
-	strcat(pStrParam, m_stepConfig.ch_3);
-	strcat(pStrParam, " ");
-	strcat(pStrParam, m_stepConfig.ch_4);
-	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_5);
-	strcat(pStrParam, " ");
-	strcat(pStrParam, m_stepConfig.ch_6);
 }
 
 time_t CStep3Dlg::FetchExcuteTimeElapse()
@@ -610,4 +602,146 @@ DWORD WINAPI OnLoadConfig3Thread(LPVOID lparam)
 	SendMessage(hWnd, UM_LOADCONFIG, (WPARAM)&stData, 0);
 
 	return 0;
+}
+
+bool CStep3Dlg::CheckSelect(UCHAR iBit)
+{
+	UINT iFlag = m_stepConfig.ch_9;
+
+	switch (iBit)
+	{
+	case 0:
+	{
+		//电压不均衡
+		iFlag = iFlag % 2;
+		break;
+	}
+	case 1:
+	{
+		//电压跳变
+		iFlag = (iFlag / 2) % 2;
+		break;
+	}
+	case 2:
+	{
+		//电压跳水
+		iFlag = (iFlag / 4) % 2;
+		break;
+	}
+	case 3:
+	{
+		//电压蹿升
+		iFlag = (iFlag / 8) % 2;
+		break;
+	}
+	case 4:
+	{
+		//电压0值
+		iFlag = (iFlag / 16) % 2;
+		break;
+	}
+	case 5:
+	{
+		//电压异值
+		iFlag = (iFlag / 32) % 2;
+		break;
+	}
+	case 6:
+	{
+		//电压无效值
+		iFlag = (iFlag / 64) % 2;
+		break;
+	}
+	case 7:
+	{
+		//温度不均衡
+		iFlag = (iFlag / 128) % 2;
+		break;
+	}
+	case 8:
+	{
+		//温度跳变
+		iFlag = (iFlag / 256) % 2;
+		break;
+	}
+	case 9:
+	{
+		//温度跳水
+		iFlag = (iFlag / 512) % 2;
+		break;
+	}
+	case 10:
+	{
+		//温度蹿升
+		iFlag = (iFlag / 1024) % 2;
+		break;
+	}
+	case 11:
+	{
+		//温度0值
+		iFlag = (iFlag / 2048) % 2;
+		break;
+	}
+	case 12:
+	{
+		//温度异值
+		iFlag = (iFlag / 4096) % 2;
+		break;
+	}
+	case 13:
+	{
+		//温度无效值
+		iFlag = (iFlag / 8192) % 2;
+		break;
+	}
+	case 14:
+	{
+		//直流阻抗异常
+		iFlag = (iFlag / 16384) % 2;
+		break;
+	}
+	case 15:
+	{
+		//电容量异常
+		iFlag = (iFlag / 32768) % 2;
+		break;
+	}
+	case 16:
+	{
+		//绝缘电阻异常
+		iFlag = (iFlag / 65536) % 2;
+		break;
+	}
+	case 17:
+	{
+		//SOC异常
+		iFlag = (iFlag / 131072) % 2;
+		break;
+	}
+	case 18:
+	{
+		//电机转矩异常
+		iFlag = (iFlag / 262144) % 2;
+		break;
+	}
+	case 19:
+	{
+		//电机转速异常
+		iFlag = (iFlag / 524288) % 2;
+		break;
+	}
+	case 20:
+	{
+		//电机温度异常
+		iFlag = (iFlag / 1048576) % 2;
+		break;
+	}
+	default:
+	{
+		iFlag = 0;
+		break;
+	}
+	}
+
+	return (iFlag > 0);
 }

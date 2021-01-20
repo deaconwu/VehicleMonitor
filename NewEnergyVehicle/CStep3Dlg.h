@@ -30,6 +30,8 @@ public:
 
 	void DisableCtrl();
 
+	bool CheckSelect(UCHAR iBit);
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_STEP3 };
