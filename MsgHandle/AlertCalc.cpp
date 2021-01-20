@@ -105,7 +105,10 @@ bool CheckAlertFlag(UINT iData, int iType)
 		break;
 	}
 	default:
+	{
+		iFlag = 0;
 		break;
+	}
 	}
 
 	return (iFlag > 0);

@@ -37,6 +37,7 @@ protected:
 
 	virtual BOOL OnInitDialog();
 
+	BOOL PreTranslateMessage(MSG* pMsg);
 
 // 实现
 protected:
