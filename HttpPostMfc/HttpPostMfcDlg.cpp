@@ -198,38 +198,45 @@ void CHttpPostMfcDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if (nIDEvent == TIMER_ID_POST)
 	{
-		bool ret = OnPost(m_chPathPost, m_chUrl);
+		bool ret = OnPost(m_chPathPost, m_chUrl, m_chPathRecord);
 
-		if (ret)
-		{
-			//上传完成，移动文件
-			SHFILEOPSTRUCT FileOp;
-			ZeroMemory((void*)&FileOp, sizeof(SHFILEOPSTRUCT));
+		OnPostCsvOnly(m_chPathPost, m_chUrl, m_chPathRecord);
 
-			int nLengthSrc = strlen(m_chPathPost);
-			char *pNewPathSrc = new char[nLengthSrc + 2];
-			strcpy(pNewPathSrc, m_chPathPost);
-			strcat(pNewPathSrc, "\\*.txt\0");
-
-			int nLengthDst = strlen(m_chPathRecord);
-			char *pNewPathDst = new char[nLengthDst + 2];
-			strcpy(pNewPathDst, m_chPathRecord);
-
-			FileOp.fFlags = FOF_NOCONFIRMATION | FOF_FILESONLY;
-			FileOp.hNameMappings = NULL;
-			FileOp.hwnd = NULL;
-			FileOp.lpszProgressTitle = NULL;
-			FileOp.pFrom = pNewPathSrc;
-			FileOp.pTo = pNewPathDst;
-			FileOp.wFunc = FO_MOVE;
-			SHFileOperation(&FileOp);
-
-			free(pNewPathSrc);
-			pNewPathSrc = NULL;
-
-			free(pNewPathDst);
-			pNewPathDst = NULL;
-		}
+// 		if (ret)
+// 		{
+// 			//上传完成，移动文件
+// 			SHFILEOPSTRUCT FileOp;
+// 			ZeroMemory((void*)&FileOp, sizeof(SHFILEOPSTRUCT));
+// 
+// 			int nLengthSrc = strlen(m_chPathPost);
+// 			char *pNewPathSrc = new char[nLengthSrc + 2];
+// 			strcpy(pNewPathSrc, m_chPathPost);
+// 			strcat(pNewPathSrc, "\\*.txt\0");
+// 
+// 			int nLengthDst = strlen(m_chPathRecord);
+// 			char *pNewPathDst = new char[nLengthDst + 2];
+// 			strcpy(pNewPathDst, m_chPathRecord);
+// 
+// 			FileOp.fFlags = FOF_NOCONFIRMATION | FOF_FILESONLY;
+// 			FileOp.hNameMappings = NULL;
+// 			FileOp.hwnd = NULL;
+// 			FileOp.lpszProgressTitle = NULL;
+// 			FileOp.pFrom = pNewPathSrc;
+// 			FileOp.pTo = pNewPathDst;
+// 			FileOp.wFunc = FO_MOVE;
+// 			int ret = SHFileOperation(&FileOp);
+// 
+// 			free(pNewPathSrc);
+// 			pNewPathSrc = NULL;
+// 
+// 			free(pNewPathDst);
+// 			pNewPathDst = NULL;
+// 			MessageBox(_T("上传成功"), _T("提示"), MB_OK);
+// 		}
+// 		else
+// 		{
+// 			MessageBox(_T("上传失败"), _T("提示"), MB_OK);
+// 		}
 
 		//间隔下一周期触发上传
 		CalcNextDateTime(m_dateTimePost);

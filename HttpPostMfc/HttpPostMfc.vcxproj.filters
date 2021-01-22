@@ -39,6 +39,9 @@
     <ClInclude Include="http_post.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="cJSON.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HttpPostMfc.cpp">
@@ -54,6 +57,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TimeStamp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cJSON.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

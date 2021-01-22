@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string.h>
 #include <windows.h>
+#include "cJSON.h"
 
 #pragma comment(lib,"ws2_32.lib") 
 #pragma comment(lib, "Wininet.lib")
@@ -16,6 +17,23 @@ struct curl_formsSelf {
 	CURLformoption option;
 	char     *value;
 };
+
+static unsigned int CheckRespCode()
+{
+	FILE *fpRead = fopen("resp.log", "rb");
+
+	cJSON *json;
+	char line[1024] = { 0 };
+	fgets(line, sizeof(line), fpRead);
+
+	fclose(fpRead);
+
+	json = cJSON_Parse(line);
+	cJSON_Print(json);
+	cJSON *arrayItem = cJSON_GetObjectItem(json, "code");
+
+	return arrayItem->valueint;
+}
 
 //分离文件扩展名
 static void str_extention(char* str, char szExtent[])
@@ -31,7 +49,7 @@ static void str_extention(char* str, char szExtent[])
 	}
 }
 
-static void str_vin_model(char* pStr, char* pVin, char* pModel)
+static void str_vin_model(char* pStr, char* pVin, char* pModel, bool bCsv=false)
 {
 	char* pTmp = pStr;
 
@@ -42,6 +60,13 @@ static void str_vin_model(char* pStr, char* pVin, char* pModel)
 	UCHAR iModLen = 0;
 	char* pM = pTmp;
 
+	if (bCsv)
+	{
+		//偏移"f_"
+		pTmp += 2;
+		iModLen += 2;
+	}
+
 	while (*pTmp != '_')
 	{
 		iModLen += 1;
@@ -51,7 +76,76 @@ static void str_vin_model(char* pStr, char* pVin, char* pModel)
 	memcpy(pModel, pM, iModLen);
 }
 
-int write_data(void* buffer, int size, int nmemb, void* userp) {
+static bool SearchCsv(const char *szPath, char* pVin, STFILENAMEMODEL arrFile[], UINT& iFileNum)
+{
+	HANDLE hFile;
+
+	WIN32_FIND_DATAA wfd = {};
+	char szPathFile[MAX_PATH] = {};
+	strcat(szPathFile, szPath);
+	strcat(szPathFile, "\\*.csv");
+
+	hFile = FindFirstFile(szPathFile, &wfd);
+	if (hFile == INVALID_HANDLE_VALUE)	//当前目录未匹配到这种类型文件
+	{
+		return false;
+	}
+
+	char chModel[10] = {};
+	char szFileName[MAX_PATH] = {};
+	char szExtent[MAX_PATH] = {};
+	strcpy(szFileName, wfd.cFileName);
+	str_extention(szFileName, szExtent);
+
+	if (!memcmp(wfd.cFileName, pVin, VIN_LENGTH))
+	{
+		str_vin_model(wfd.cFileName, pVin, chModel, true);
+
+		memcpy(arrFile[iFileNum].szName, wfd.cFileName, strlen(wfd.cFileName));
+		memcpy(arrFile[iFileNum].szModel, chModel, sizeof(chModel));
+
+		iFileNum += 1;
+	}
+
+	bool ret = false;
+
+	do
+	{
+		if (FindNextFile(hFile, &wfd))
+		{
+			if (memcmp(wfd.cFileName, pVin, VIN_LENGTH))
+			{
+				continue;
+			}
+
+			memset(szFileName, 0, sizeof(szFileName));
+			strcpy(szFileName, wfd.cFileName);
+			str_extention(szFileName, szExtent);
+
+			if (memcmp(szExtent, "csv", strlen("csv")))
+			{
+				continue;
+			}
+
+			memset(chModel, 0, sizeof(chModel));
+			str_vin_model(wfd.cFileName, pVin, chModel, true);
+
+			memcpy(arrFile[iFileNum].szName, wfd.cFileName, strlen(wfd.cFileName));
+			memcpy(arrFile[iFileNum].szModel, chModel, sizeof(chModel));
+
+			iFileNum += 1;
+			ret = true;
+		}
+		else
+		{
+			break;
+		}
+	} while (1);
+
+	return false;
+}
+
+int write_data(void* buffer, int size, int nmemb, void* resp) {
 	// 	std::string* str = dynamic_cast<std::string*>((std::string*)userp);
 	// 	str->append((char*)buffer, size * nmemb);
 
@@ -62,7 +156,89 @@ int write_data(void* buffer, int size, int nmemb, void* userp) {
 	return nmemb;
 }
 
-bool OnPost(const char *szPath, const char *szUrl)
+//考虑某辆车只存在csv类型文件，无其他类型
+bool OnPostCsvOnly(const char *szPath, const char *szUrl, const char *szHis)
+{
+	HANDLE hFile;
+
+	WIN32_FIND_DATAA wfd = {};
+	char szPathFile[MAX_PATH] = {};
+	strcat(szPathFile, szPath);
+	strcat(szPathFile, "\\*.csv");
+
+	hFile = FindFirstFile(szPathFile, &wfd);
+	if (hFile == INVALID_HANDLE_VALUE)	//当前目录未匹配到这种类型文件
+	{
+		return false;
+	}
+
+	char szFileName[MAX_PATH] = {};
+	char szExtent[MAX_PATH] = {};
+	strcpy(szFileName, wfd.cFileName);
+	str_extention(szFileName, szExtent);
+
+	char chVin[VIN_LENGTH + 1] = {};
+	char chModel[10] = {};
+	str_vin_model(szFileName, chVin, chModel, true);
+
+	STFILENAMEMODEL arrFile[MAX_FILENUM] = {};
+	memcpy(arrFile[0].szName, wfd.cFileName, strlen(wfd.cFileName));
+	memcpy(arrFile[0].szModel, chModel, sizeof(chModel));
+	UINT iFileNum = 1;
+	bool ret = false;
+
+	do
+	{
+		if (FindNextFile(hFile, &wfd))
+		{
+			memset(szFileName, 0, sizeof(szFileName));
+			strcpy(szFileName, wfd.cFileName);
+			str_extention(szFileName, szExtent);
+
+			if (memcmp(szExtent, "csv", strlen("csv")))
+			{
+				continue;
+			}
+
+			char chVinEx[VIN_LENGTH + 1] = {};
+			char chModelEx[10] = {};
+			str_vin_model(szFileName, chVinEx, chModelEx, true);
+
+			if (!memcmp(chVin, chVinEx, VIN_LENGTH))	//同一vin码有关的文件放一块上传
+			{
+				memcpy(arrFile[iFileNum].szName, wfd.cFileName, strlen(wfd.cFileName));
+				memcpy(arrFile[iFileNum].szModel, chModelEx, sizeof(chModelEx));
+
+				iFileNum += 1;
+			}
+			else
+			{
+				printf("post vin %s\n", chVin);
+
+				//这个vin码相关文件已遍历完，开始上传这辆车所有信息
+				ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl, szHis);
+
+				memcpy(chVin, chVinEx, VIN_LENGTH);
+				memcpy(chModel, chModelEx, sizeof(chModelEx));
+
+				memset(&arrFile, 0, sizeof(arrFile));
+				memcpy(arrFile[0].szName, wfd.cFileName, strlen(wfd.cFileName));
+				memcpy(arrFile[0].szModel, chModelEx, sizeof(chModelEx));
+				iFileNum = 1;
+			}
+		}
+		else
+		{
+			ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl, szHis);
+
+			break;
+		}
+	} while (1);
+
+	return ret;
+}
+
+bool OnPost(const char *szPath, const char *szUrl, const char *szHis)
 {
 	HANDLE hFile;
 
@@ -119,8 +295,12 @@ bool OnPost(const char *szPath, const char *szUrl)
 			else
 			{
 				printf("post vin %s\n", chVin);
+
+				//找出这个vin码的csv文件
+				SearchCsv(szPath, chVin, arrFile, iFileNum);
+
 				//这个vin码相关文件已遍历完，开始上传这辆车所有信息
-				ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl);
+				ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl, szHis);
 
 				//itemLen += snprintf(&strJsonData[itemLen], BUFFER_SIZE, JSON_VIN, chVin);
 
@@ -135,7 +315,10 @@ bool OnPost(const char *szPath, const char *szUrl)
 		}
 		else
 		{
-			ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl);
+			//找出这个vin码的csv文件
+			SearchCsv(szPath, chVin, arrFile, iFileNum);
+
+			ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl, szHis);
 
 			break;
 		}
@@ -144,7 +327,7 @@ bool OnPost(const char *szPath, const char *szUrl)
 	return ret;
 }
 
-bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iFileNum, const char *szUrl)
+bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iFileNum, const char *szUrl, const char *szHis)
 {
 	SYSTEMTIME st;
 	GetLocalTime(&st);
@@ -222,12 +405,15 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 		CURLFORM_ARRAY, forms,
 		CURLFORM_END);
 
+	//FILE *fpWrite = fopen("resp.log", "wb");
+
 	curlCode = curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
 	curlCode = curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
 	//curl_easy_setopt(curl, CURLOPT_READFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-	curl_easy_setopt(curl, CURLOPT_READDATA, (void*)&response);
+	//curl_easy_setopt(curl, CURLOPT_WRITEDATA, fpWrite);
+	//curl_easy_setopt(curl, CURLOPT_READDATA, (void*)&response);
 	curlCode = curl_easy_perform(curl);
 
 	curl_slist_free_all(list);
@@ -235,11 +421,59 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
 
+	//fclose(fpWrite);
+
 	for (UINT i = 0; i < iFileNum; i++)
 	{
 		free(forms[i].value);
 		forms[i].value = NULL;
 	}
 
-	return curlCode == CURLE_OK;
+	if (curlCode == CURLE_OK)
+	{
+		//读resp.log里的状态码
+		unsigned int iCode = CheckRespCode();
+		if (200 == iCode)
+		{
+			//上传成功的文件才移动
+			OnMove(szPath, szHis, arrFile, iFileNum);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], unsigned int iFileNum)
+{
+	//移动文件
+	SHFILEOPSTRUCT FileOp;
+	ZeroMemory((void*)&FileOp, sizeof(SHFILEOPSTRUCT));
+	FileOp.fFlags = FOF_NOCONFIRMATION | FOF_FILESONLY;
+	FileOp.hNameMappings = NULL;
+	FileOp.hwnd = NULL;
+	FileOp.lpszProgressTitle = NULL;
+
+	char *pPathSrc = new char[MAX_PATH*iFileNum];
+
+	for (UINT i = 0; i < iFileNum; i++)
+	{
+		memset(pPathSrc, 0, MAX_PATH*iFileNum);
+		strcat(pPathSrc, szPath);
+		strcat(pPathSrc, "\\");
+		strcat(pPathSrc, arrFile[i].szName);
+		strcat(pPathSrc, "\0\0");
+
+		FileOp.pFrom = pPathSrc;
+		FileOp.pTo = szHis;
+		FileOp.wFunc = FO_MOVE;
+		int ret = SHFileOperation(&FileOp);
+		if (ret)
+		{
+			printf("move error");
+		}
+	}
+
+	free(pPathSrc);
+	pPathSrc = NULL;
 }

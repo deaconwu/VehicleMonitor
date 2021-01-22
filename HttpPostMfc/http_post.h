@@ -13,9 +13,13 @@
 typedef struct FileNameModel
 {
 	char szName[260];
-	char szModel[10];
+	char szModel[20];
 } STFILENAMEMODEL;
 
-bool OnPost(const char *szPath, const char *szUrl);
+bool OnPostCsvOnly(const char *szPath, const char *szUrl, const char *szHis);
 
-bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], unsigned int iFileNum, const char *szUrl);
+bool OnPost(const char *szPath, const char *szUrl, const char *szHis);
+
+bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], unsigned int iFileNum, const char *szUrl, const char *szHis);
+
+void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], unsigned int iFileNum);

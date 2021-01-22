@@ -191,6 +191,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cJSON.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="HttpPostMfc.h" />
     <ClInclude Include="HttpPostMfcDlg.h" />
@@ -201,6 +202,7 @@
     <ClInclude Include="TimeStamp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cJSON.c" />
     <ClCompile Include="HttpPostMfc.cpp" />
     <ClCompile Include="HttpPostMfcDlg.cpp" />
     <ClCompile Include="http_post.cpp" />
