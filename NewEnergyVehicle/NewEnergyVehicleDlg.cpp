@@ -13,7 +13,9 @@
 #define new DEBUG_NEW
 #endif
 
-static SHELLEXECUTEINFO shellExe[4] = {};
+//数据入库相关的几个执行程序
+static char g_coreExe[5][30] = {"CoreExe.exe", "S1_ThRaw2GB.exe", "S2_ThGB2RVT.exe", "S3_ThRVT2DtVFb2_0.exe", "S4_ThRVT2TzTFb2_0.exe"};
+
 
 // CNewEnergyVehicleDlg 对话框
 
@@ -21,6 +23,7 @@ CNewEnergyVehicleDlg::CNewEnergyVehicleDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_NEWENERGYVEHICLE_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	memset(&m_stepStatus, 0, sizeof(m_stepStatus));
 }
 
 void CNewEnergyVehicleDlg::DoDataExchange(CDataExchange* pDX)
@@ -33,17 +36,40 @@ void CNewEnergyVehicleDlg::KillAllTimer()
 	KillTimer(TIMER_ID_STEP1_START);
 	KillTimer(TIMER_ID_STEP2_START);
 	KillTimer(TIMER_ID_STEP3_START);
-	KillTimer(TIMER_ID_STEP3_START);
+	KillTimer(TIMER_ID_STEP4_START);
 	KillTimer(TIMER_ID_STEP2_ENDCHECK);
 	KillTimer(TIMER_ID_STEP3_ENDCHECK);
 }
 
 void CNewEnergyVehicleDlg::KillAttachProcess()
 {
+	HANDLE hProcess = NULL;
 	DWORD dwProcess = GetProcessidFromName("Port_2GB.exe");
 	if (dwProcess > 0)
 	{
-		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
+		hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
+		if (NULL != hProcess)
+		{
+			TerminateProcess(hProcess, 0);
+		}
+	}
+
+	for (int i=0; i<5; i++)
+	{
+		dwProcess = GetProcessidFromName(g_coreExe[i]);
+		hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
+		if (NULL != hProcess)
+		{
+			TerminateProcess(hProcess, 0);
+		}
+	}
+
+	char chCall[20] = {};
+	for (int i = 0; i < 21; i++)
+	{
+		sprintf(chCall, "Call%u.exe", i);
+		dwProcess = GetProcessidFromName(chCall);
+		hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
 		if (NULL != hProcess)
 		{
 			TerminateProcess(hProcess, 0);
@@ -200,6 +226,8 @@ LRESULT CNewEnergyVehicleDlg::OnLoadStep3End(WPARAM wParam, LPARAM lParam)
 
 LRESULT CNewEnergyVehicleDlg::OnHttpPostEnd(WPARAM wParam, LPARAM lParam)
 {
+	memset(&m_stepStatus, 0, sizeof(m_stepStatus));
+
 	//计算下一周期数据日期
 	CalcNextDateTime(m_dataDateStep2);
 	CalcNextDateTime(m_dataDateStep3);
@@ -281,6 +309,11 @@ BOOL CNewEnergyVehicleDlg::OnInitDialog()
 
 	//如果数据库和表不存在就创建：步骤、执行程序名、执行状态(0开始执行、1已退出、2等待完成)、执行时间
 	strcpy(g_sqliteLog.sqlCmd, "create table step_log(stepIndex INTEGER NOT NULL, programName TEXT NOT NULL, state INTEGER NOT NULL, operateTime BLOB NOT NULL);");
+	sqlite3_exec_cmd(&g_sqliteLog);
+
+	//文件上传记录，resp_code-函数返回值，status_code-服务器返回状态码，200上传成功，其它上传失败；若resp_code返回失败，status_code允许为NULL
+	ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+	strcpy(g_sqliteLog.sqlCmd, "create table post_record(vin TEXT NOT NULL, model TEXT NOT NULL, file BLOB NOT NULL, resp_code INTEGER NOT NULL, status_code INTEGER NULL, time BLOB NOT NULL);");
 	sqlite3_exec_cmd(&g_sqliteLog);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -501,31 +534,23 @@ void CNewEnergyVehicleDlg::OnBnClickedBtnLaunch()
 
 	SetTimer(TIMER_ID_STEP1_START, tElapse1 * 1000, NULL);	//最后一个填NULL，默认回调OnTimer
 
-	//SetTimer(TIMER_ID_STEP2_START, tElapse2 * 1000, NULL);
+	SetTimer(TIMER_ID_STEP2_START, tElapse2 * 1000, NULL);
 
-	SetTimer(TIMER_ID_STEP2_START, (tElapse1 + 10) * 1000, NULL);
+	//SetTimer(TIMER_ID_STEP2_START, (tElapse1 + 5) * 1000, NULL);
 
-	//SetTimer(TIMER_ID_STEP3_START, tElapse3 * 1000, NULL);
+	SetTimer(TIMER_ID_STEP3_START, tElapse3 * 1000, NULL);
 
-	SetTimer(TIMER_ID_STEP3_START, (tElapse1 + 20) * 1000, NULL);
+	//SetTimer(TIMER_ID_STEP3_START, (tElapse1 + 60) * 1000, NULL);
 
-	//SetTimer(TIMER_ID_STEP4_START, tElapse4 * 1000, NULL);
+	SetTimer(TIMER_ID_STEP4_START, tElapse4 * 1000, NULL);
 
-	SetTimer(TIMER_ID_STEP4_START, (tElapse1 + 30) * 1000, NULL);
+	//SetTimer(TIMER_ID_STEP4_START, (tElapse1 + 70) * 1000, NULL);
 }
 
 void CNewEnergyVehicleDlg::OnBnClickedBtnQuit()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	DWORD dwProcess = GetProcessidFromName("Port_2GB.exe");
-	if (dwProcess > 0)
-	{
-		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcess);
-		if (NULL != hProcess)
-		{
-			TerminateProcess(hProcess, 0);
-		}
-	}
+	KillAttachProcess();
 
 	PostMessage(WM_QUIT, 0, 0);
 }
@@ -544,7 +569,7 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 	{
 		//sqlite日志记录数据收发运行
 		ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-		sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(1, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+		sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(1, 'Port_2GB.exe', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 			eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 		sqlite3_exec_cmd(&g_sqliteLog);
 
@@ -558,7 +583,7 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 	{
 		//sqlite日志记录执行数据入库
 		ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-		sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(2, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+		sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(2, 'CoreExe.exe', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 			eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 		sqlite3_exec_cmd(&g_sqliteLog);
 
@@ -567,54 +592,71 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 		m_step2Dlg.FetchTransParam(param);
 
 		//执行数据入库
-		ShellExecute(0, "open", "CoreExe.exe", param, "", SW_SHOWNORMAL);
+		ShellExecute(0, "open", g_coreExe[0], param, "", SW_SHOWNORMAL);
+		m_stepStatus.eStep2 = eStepState_Excute;
 	}
 	else if (nIDEvent == TIMER_ID_STEP3_START || nIDEvent == TIMER_ID_STEP2_ENDCHECK)
 	{
+		char chCore[30] = {};
+		DWORD dwProcess = 0;
+
 		//检测数据入库是否完成
-		DWORD dwProcess = GetProcessidFromName("CoreExe.exe");
+		for (int i=4; i>=0; i--)
+		{
+			dwProcess = GetProcessidFromName(g_coreExe[i]);
+			if (dwProcess > 0)
+			{
+				//数据入库未完成
+				memcpy(chCore, g_coreExe[i], 30);
+				break;
+			}
+		}
+
 		if (dwProcess == 0)
 		{
 			//sqlite日志记录数据入库完成
 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(2, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, 'CoreExe', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
-			//sqlite日志记录常态化点名执行
-			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-			sqlite3_exec_cmd(&g_sqliteLog);
+			m_stepStatus.eStep2 = eStepState_Quit;
 
 			char param[512] = {};
 			sprintf(param, "%02u_%02u_%02u ", m_dataDateStep3.wYear, m_dataDateStep3.wMonth, m_dataDateStep3.wDay);
 			m_step3Dlg.FetchTransParam(param);
 
 			//已完成入库，开始执行常态化点名
-// 			for (UINT i=0; i<=21; i++)
-// 			{
-// 				if (m_step3Dlg.CheckSelect(i))
-// 				{
-// 					char chExe[20] = {};
-// 					sprintf(chExe, "Call%u.EXE", i);
-// 					ShellExecute(0, "open", chExe, param, "", SW_SHOWNORMAL);
-// 					dwProcess = GetProcessidFromName(chExe);
-// 					while (dwProcess > 0)
-// 					{
-// 						dwProcess = GetProcessidFromName(chExe);
-// 					}
-// 				}
-// 			}
+			for (UINT i=0; i<21; i++)
+			{
+				//顺序执行选中的点名类型
+				if (m_step3Dlg.CheckSelect(i))
+				{
+					char chCall[20] = {};
+					sprintf(chCall, "Call%u.exe", i);
 
-			ShellExecute(0, "open", "Call0.exe", param, "", SW_SHOWNORMAL);
+					//sqlite日志记录常态化点名执行
+					ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+					sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, '%s', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+						chCall, eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+					sqlite3_exec_cmd(&g_sqliteLog);
+
+					ShellExecute(0, "open", chCall, param, "", SW_SHOWNORMAL);
+					m_stepStatus.eStep3 = eStepState_Excute;
+					dwProcess = GetProcessidFromName(chCall);
+					while (dwProcess > 0)
+					{
+						dwProcess = GetProcessidFromName(chCall);
+					}
+				}
+			}
 		}
 		else
 		{
-			//sqlite日志记录等待数据入库完成
+			//sqlite日志记录数据入库等待
 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(2, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-				eStepState_Wait, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, '%s', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+				chCore, eStepState_Wait, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
 			//未完成入库，间隔1秒检查入库是否完成
@@ -623,79 +665,71 @@ void CNewEnergyVehicleDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 	else if (nIDEvent == TIMER_ID_STEP4_START || nIDEvent == TIMER_ID_STEP3_ENDCHECK)
 	{
-		DWORD dwProcess2 = GetProcessidFromName("CoreExe.exe");
+		DWORD dwProcess = 0;
+		char chExe[30] = {};
 
-		//检测常态化点名是否完成
-// 		DWORD dwProcess3 = 0;
-// 		for (UINT i = 0; i <= 21; i++)
-// 		{
-// 			char chExe[20] = {};
-// 			sprintf(chExe, "Call%u.exe", i);
-// 			dwProcess3 = GetProcessidFromName(chExe);
-// 			if (dwProcess3 > 0)
-// 			{
-// 				//常态化点名未完成
-// 				break;
-// 			}
-// 		}
-// 
-// 		if (dwProcess2 > 0 || dwProcess3 > 0)
-// 		{
-// 			//sqlite日志记录等待常态化点名完成
-// 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-// 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-// 				eStepState_Wait, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-// 			sqlite3_exec_cmd(&g_sqliteLog);
-// 
-// 			//未完成常态化点名，间隔1秒检查常态化点名是否完成
-// 			SetTimer(TIMER_ID_STEP3_ENDCHECK, 1000, NULL);
-// 		}
-// 		else
-// 		{
-// 			//sqlite日志记录常态化点名完成
-// 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-// 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-// 				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-// 			sqlite3_exec_cmd(&g_sqliteLog);
-// 
-// 			//sqlite日志记录数据上传执行
-// 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-// 			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-// 				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-// 			sqlite3_exec_cmd(&g_sqliteLog);
-// 
-// 			//已完成常态化点名，开始执行数据上传
-// 			m_step4Dlg.ExcutePost();
-// 		}
-
-		DWORD dwProcess3 = GetProcessidFromName("DtVtb.EXE");
-		if (dwProcess2 == 0 && dwProcess3 == 0)
+		//检测数据入库是否完成
+		for (int i = 4; i >= 0; i--)
 		{
-			//sqlite日志记录常态化点名完成
-			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-			sqlite3_exec_cmd(&g_sqliteLog);
-
-			//sqlite日志记录数据上传执行
-			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-			sqlite3_exec_cmd(&g_sqliteLog);
-
-			//已完成常态化点名，开始执行数据上传
-			m_step4Dlg.ExcutePost();
+			dwProcess = GetProcessidFromName(g_coreExe[i]);
+			if (dwProcess > 0)
+			{
+				//数据入库未完成
+				memcpy(chExe, g_coreExe[i], 30);
+				break;
+			}
 		}
-		else
+
+		if (dwProcess == 0)
 		{
-			//sqlite日志记录等待常态化点名完成
+			//检测常态化点名是否完成
+			for (UINT i = 0; i < 21; i++)
+			{
+				sprintf(chExe, "Call%u.exe", i);
+				dwProcess = GetProcessidFromName(chExe);
+				if (dwProcess > 0)
+				{
+					//常态化点名未完成
+					break;
+				}
+			}
+		}
+
+		if (dwProcess == 0)
+		{
+			memset(chExe, 0, sizeof(chExe));
+			strcpy(chExe, "Call");
+		}
+
+		if (dwProcess > 0 || m_stepStatus.eStep2==0 || m_stepStatus.eStep3==0)
+		{
+			//sqlite日志记录常态化点名等待
 			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(3, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-				eStepState_Wait, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, '%s', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+				chExe, eStepState_Wait, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 			sqlite3_exec_cmd(&g_sqliteLog);
 
 			//未完成常态化点名，间隔1秒检查常态化点名是否完成
 			SetTimer(TIMER_ID_STEP3_ENDCHECK, 1000, NULL);
+		}
+		else
+		{
+			//sqlite日志记录常态化点名完成
+			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, 'Call', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+				eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+			sqlite3_exec_cmd(&g_sqliteLog);
+
+			m_stepStatus.eStep3 = eStepState_Quit;
+
+			//sqlite日志记录数据上传执行
+			ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+			sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, 'Post', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+				eStepState_Excute, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+			sqlite3_exec_cmd(&g_sqliteLog);
+
+			//已完成常态化点名，开始执行数据上传
+			//m_step4Dlg.ExcutePost();
 		}
 	}
 }

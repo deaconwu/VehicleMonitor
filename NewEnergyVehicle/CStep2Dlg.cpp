@@ -107,8 +107,6 @@ void CStep2Dlg::FetchConfigExcuteDateTime(SYSTEMTIME& stDate)
 
 void CStep2Dlg::FetchTransParam(char* pStrParam)
 {
-	strcat(pStrParam, m_stepConfig.ch_0);
-	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_1);
 	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_2);
@@ -274,7 +272,6 @@ void CStep2Dlg::OnBnClickedBtnStep2Apply()
 	((CDateTimeCtrl*)GetDlgItem(IDC_DATETIMEPICKER_STEP2EXCUTE))->GetTime(&stTime);
 	sprintf(m_stepConfig.ch_7, "%02u-%02u-%02u %02u:%02u:%02u", stTime.wYear, stTime.wMonth, stTime.wDay, stTime.wHour, stTime.wMinute, stTime.wSecond);
 
-
 	TCHAR tchConfig[256] = {};
 	((CEdit*)GetDlgItem(IDC_EDIT_STEP2_PATHORINGIN))->GetWindowText(tchConfig, 256);
 	sprintf(m_stepConfig.ch_1, "%s", tchConfig);
@@ -356,25 +353,6 @@ bool CStep2Dlg::CheckConfigEnterDateValid()
 			return false;
 		}
 	}
-
-	//入库数据时间判断，入库的数据日期为当天之前
-// 	if (stDate.wYear > m_step1Date.wYear)
-// 	{
-// 		return false;
-// 	}
-// 
-// 	if (stDate.wYear == stToday.wYear)
-// 	{
-// 		if (stDate.wMonth > stToday.wMonth)
-// 		{
-// 			return false;
-// 		}
-// 
-// 		if (stDate.wMonth == stToday.wMonth && stDate.wDay > stToday.wDay)
-// 		{
-// 			return false;
-// 		}
-// 	}
 
 	return true;
 }

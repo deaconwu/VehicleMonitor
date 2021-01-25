@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string.h>
 #include <windows.h>
+#include "cJSON.h"
 
 #pragma comment(lib,"ws2_32.lib") 
 #pragma comment(lib, "Wininet.lib")
@@ -16,6 +17,23 @@ struct curl_formsSelf {
 	CURLformoption option;
 	char     *value;
 };
+
+static unsigned int CheckRespCode()
+{
+	FILE *fpRead = fopen("resp.log", "rb");
+
+	cJSON *json;
+	char line[1024] = { 0 };
+	fgets(line, sizeof(line), fpRead);
+
+	fclose(fpRead);
+
+	json = cJSON_Parse(line);
+	cJSON_Print(json);
+	cJSON *arrayItem = cJSON_GetObjectItem(json, "code");
+
+	return arrayItem->valueint;
+}
 
 //分离文件扩展名
 static void str_extention(char* str, char szExtent[])
@@ -51,7 +69,8 @@ static void str_vin_model(char* pStr, char* pVin, char* pModel)
 	memcpy(pModel, pM, iModLen);
 }
 
-int write_data(void* buffer, int size, int nmemb, void* userp) {
+int write_data(void* buffer, int size, int nmemb, void* resp)
+{
 	// 	std::string* str = dynamic_cast<std::string*>((std::string*)userp);
 	// 	str->append((char*)buffer, size * nmemb);
 
@@ -62,7 +81,7 @@ int write_data(void* buffer, int size, int nmemb, void* userp) {
 	return nmemb;
 }
 
-bool OnPost(const char *szPath)
+bool OnPost(const char *szPath, const char *szUrl, const char *szHis)
 {
 	HANDLE hFile;
 
@@ -120,7 +139,10 @@ bool OnPost(const char *szPath)
 			{
 				printf("post vin %s\n", chVin);
 				//这个vin码相关文件已遍历完，开始上传这辆车所有信息
-				ret = OnPost(szPath, chVin, arrFile, iFileNum);
+				if (strlen(chVin) == VIN_LENGTH)
+				{
+					ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl, szHis);
+				}
 
 				//itemLen += snprintf(&strJsonData[itemLen], BUFFER_SIZE, JSON_VIN, chVin);
 
@@ -135,7 +157,7 @@ bool OnPost(const char *szPath)
 		}
 		else
 		{
-			ret = OnPost(szPath, chVin, arrFile, iFileNum);
+			ret = OnPost(szPath, chVin, arrFile, iFileNum, szUrl, szHis);
 
 			break;
 		}
@@ -144,7 +166,7 @@ bool OnPost(const char *szPath)
 	return ret;
 }
 
-bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iFileNum)
+bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iFileNum, const char *szUrl, const char *szHis)
 {
 	SYSTEMTIME st;
 	GetLocalTime(&st);
@@ -202,8 +224,7 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 
 	CURL *curl = curl_easy_init();
 
-	// 郑州日产生产地址 http://10.130.168.128:8096/analysis/file
-	curlCode = curl_easy_setopt(curl, CURLOPT_URL, "http://10.130.161.172:9215/analysis/file");
+	curlCode = curl_easy_setopt(curl, CURLOPT_URL, szUrl);
 
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, "ANALYSIS-CALL-TOKEN:jfu349fh9w8fJDWEEjcmwiefm38fjmcdiowe");
@@ -243,5 +264,60 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 		forms[i].value = NULL;
 	}
 
-	return curlCode==CURLE_OK;
+	unsigned int statusCode = 0;
+
+	if (curlCode == CURLE_OK)
+	{
+		//读resp.log里的状态码
+		statusCode = CheckRespCode();
+		if (200 == statusCode)
+		{
+			//上传成功的文件才移动
+			OnMove(szPath, szHis, arrFile, iFileNum);
+		}
+	}
+
+	for (UINT i = 0; i < iFileNum; i++)
+	{
+		ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
+		sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO post_record VALUES('%s', '%s', '%s', %u, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+			chVin, arrFile[i].szModel, arrFile[i].szName, curlCode, statusCode, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+		sqlite3_exec_cmd(&g_sqliteLog);
+	}
+
+	return (curlCode == CURLE_OK) && (statusCode == 200);
+}
+
+void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], unsigned int iFileNum)
+{
+	//移动文件
+	SHFILEOPSTRUCT FileOp;
+	ZeroMemory((void*)&FileOp, sizeof(SHFILEOPSTRUCT));
+	FileOp.fFlags = FOF_NOCONFIRMATION | FOF_FILESONLY;
+	FileOp.hNameMappings = NULL;
+	FileOp.hwnd = NULL;
+	FileOp.lpszProgressTitle = NULL;
+
+	char *pPathSrc = new char[MAX_PATH*iFileNum];
+
+	for (UINT i=0; i<iFileNum; i++)
+	{
+		memset(pPathSrc, 0, MAX_PATH*iFileNum);
+		strcat(pPathSrc, szPath);
+		strcat(pPathSrc, "\\");
+		strcat(pPathSrc, arrFile[i].szName);
+		strcat(pPathSrc, "\0\0");
+
+		FileOp.pFrom = pPathSrc;
+		FileOp.pTo = szHis;
+		FileOp.wFunc = FO_MOVE;
+		int ret = SHFileOperation(&FileOp);
+		if (ret)
+		{
+			printf("move error");
+		}
+	}
+
+	free(pPathSrc);
+	pPathSrc = NULL;
 }

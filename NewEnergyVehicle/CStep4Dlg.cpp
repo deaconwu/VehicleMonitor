@@ -123,46 +123,19 @@ time_t CStep4Dlg::FetchExcuteTimeElapse()
 
 void CStep4Dlg::ExcutePost()
 {
-	bool ret = OnPost(m_stepConfig.ch_1);
+	OnPost(m_stepConfig.ch_1, m_stepConfig.ch_0, m_stepConfig.ch_4);
 
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 
-	if (!ret)
-	{
-		//sqlite日志记录数据上传失败
-		ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-		sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
-			eStepState_Error, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-		sqlite3_exec_cmd(&g_sqliteLog);
-	}
-
 	//sqlite日志记录数据上传结束
 	ZeroMemory(g_sqliteLog.sqlCmd, sizeof(g_sqliteLog.sqlCmd));
-	sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, %u, '%02u-%02u-%02u %02u:%02u:%02u');",
+	sprintf_s(g_sqliteLog.sqlCmd, "INSERT INTO step_log VALUES(4, 'Post', %u, '%02u-%02u-%02u %02u:%02u:%02u');",
 		eStepState_Quit, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
 	sqlite3_exec_cmd(&g_sqliteLog);
 
 	//上传完成，再周期触发数据入库、常态化点名、数据上传
 	::PostMessage(m_hPWnd, UM_HTTPPOSTEND, NULL, NULL);
-
-	//移动文件
-	SHFILEOPSTRUCT FileOp;
-	ZeroMemory((void*)&FileOp, sizeof(SHFILEOPSTRUCT));
-
-	int nLengthFrm = strlen(m_stepConfig.ch_1);
-	char *NewPathFrm = new char[nLengthFrm + 2];
-	strcpy(NewPathFrm, m_stepConfig.ch_1);
-	strcat(NewPathFrm, "\\*.txt\0");
-
-	FileOp.fFlags = FOF_NOCONFIRMATION | FOF_FILESONLY;
-	FileOp.hNameMappings = NULL;
-	FileOp.hwnd = NULL;
-	FileOp.lpszProgressTitle = NULL;
-	FileOp.pFrom = NewPathFrm;
-	FileOp.pTo = "F:\\VSProject\\NewEnergyVehicle\\To";
-	FileOp.wFunc = FO_MOVE;
-	SHFileOperation(&FileOp);
 }
 
 BEGIN_MESSAGE_MAP(CStep4Dlg, CDialogEx)
@@ -170,6 +143,7 @@ BEGIN_MESSAGE_MAP(CStep4Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_STEP4_PATHUPLOAD, &CStep4Dlg::OnBnClickedBtnStep4Pathupload)
 	ON_BN_CLICKED(IDC_BTN_STEP4_APPLY, &CStep4Dlg::OnBnClickedBtnStep4Apply)
 	ON_MESSAGE(UM_LOADCONFIG, &CStep4Dlg::OnLoadConfig)
+	ON_BN_CLICKED(IDC_BTN_STEP4_PATHHISTORY, &CStep4Dlg::OnBnClickedBtnStep4Pathhistory)
 END_MESSAGE_MAP()
 
 
@@ -182,6 +156,7 @@ LRESULT CStep4Dlg::OnLoadConfig(WPARAM wParam, LPARAM lParam)
 
 	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_URL))->SetWindowText(pMsg->ch_0);
 	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_PATHUPLOAD))->SetWindowText(pMsg->ch_1);
+	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_PATHHISTORY))->SetWindowText(pMsg->ch_4);
 
 	SYSTEMTIME stTime = {};
 	Str2Time(stTime, pMsg->ch_2);
@@ -210,6 +185,15 @@ void CStep4Dlg::OnBnClickedBtnStep4Pathupload()
 	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_PATHUPLOAD))->SetWindowText(tchPath);
 }
 
+void CStep4Dlg::OnBnClickedBtnStep4Pathhistory()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	LPITEMIDLIST lp = SHBrowseForFolder(&m_bi);
+	TCHAR tchPath[512] = {};
+	SHGetPathFromIDList(lp, tchPath);
+
+	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_PATHHISTORY))->SetWindowText(tchPath);
+}
 
 void CStep4Dlg::OnBnClickedBtnStep4Apply()
 {
@@ -229,6 +213,10 @@ void CStep4Dlg::OnBnClickedBtnStep4Apply()
 	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_PERIOD))->GetWindowText(tchConfig, 256);
 	m_stepConfig.ch_3 = atoi(tchConfig);
 
+	ZeroMemory(tchConfig, 256);
+	((CEdit*)GetDlgItem(IDC_EDIT_STEP4_PATHHISTORY))->GetWindowText(tchConfig, 256);
+	sprintf(m_stepConfig.ch_4, "%s", tchConfig);
+
 	SYSTEMTIME stTime = {};
 	((CDateTimeCtrl*)GetDlgItem(IDC_DATETIMEPICKER_STEP4EXECUTE))->GetTime(&stTime);
 	sprintf(m_stepConfig.ch_2, "%02u-%02u-%02u %02u:%02u:%02u", stTime.wYear, stTime.wMonth, stTime.wDay, stTime.wHour, stTime.wMinute, stTime.wSecond);
@@ -237,7 +225,8 @@ void CStep4Dlg::OnBnClickedBtnStep4Apply()
 	fprintf(pF, "对端URL地址: \"%s\"\n", m_stepConfig.ch_0);
 	fprintf(pF, "上传数据路径: \"%s\"\n", m_stepConfig.ch_1);
 	fprintf(pF, "上传执行时间: \"%s\"\n", m_stepConfig.ch_2);
-	fprintf(pF, "上传周期: \"%u\"", m_stepConfig.ch_3);
+	fprintf(pF, "上传周期: \"%u\"\n", m_stepConfig.ch_3);
+	fprintf(pF, "历史数据路径: \"%s\"", m_stepConfig.ch_4);
 
 	fclose(pF);
 
@@ -281,6 +270,9 @@ DWORD WINAPI OnLoadConfig4Thread(LPVOID lparam)
 	pConfig = (char*)strtok(NULL, "\n");
 	FilterConfig(chInt, pConfig);
 	stData.ch_3 = atoi(chInt);
+
+	pConfig = (char*)strtok(NULL, "\n");
+	FilterConfig(stData.ch_4, pConfig);
 
 	free(pContent);
 

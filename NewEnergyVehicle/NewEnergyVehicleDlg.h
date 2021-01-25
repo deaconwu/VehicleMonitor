@@ -70,6 +70,8 @@ private:
 	SYSTEMTIME m_dateTimeStep3;
 	SYSTEMTIME m_dateTimeStep4;
 
+	STSTEPSTATUS m_stepStatus;
+
 public:
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();

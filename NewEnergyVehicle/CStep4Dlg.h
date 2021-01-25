@@ -41,6 +41,7 @@ protected:
 public:
 	afx_msg void OnBnClickedBtnStep4Pre();
 	afx_msg void OnBnClickedBtnStep4Pathupload();
+	afx_msg void OnBnClickedBtnStep4Pathhistory();
 	afx_msg void OnBnClickedBtnStep4Apply();
 
 private:

@@ -405,6 +405,12 @@ void CStep3Dlg::OnBnClickedBtnStep3Apply()
 		MessageBox(_T("常态化点名执行时间错误！"), _T("提示"), MB_OK);
 		return;
 	}
+
+	if (!m_stepConfig.ch_9)
+	{
+		MessageBox(_T("至少选择一种点名类型！"), _T("提示"), MB_OK);
+		return;
+	}
 }
 
 bool CStep3Dlg::CheckConfigComplete()
@@ -525,6 +531,10 @@ void CStep3Dlg::FetchTransParam(char* pStrParam)
 	strcat(pStrParam, m_stepConfig.ch_1);
 	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_2);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_3);
+	strcat(pStrParam, " ");
+	strcat(pStrParam, m_stepConfig.ch_4);
 	strcat(pStrParam, " ");
 	strcat(pStrParam, m_stepConfig.ch_5);
 }

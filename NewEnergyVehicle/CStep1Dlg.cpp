@@ -101,9 +101,6 @@ void CStep1Dlg::OnBnClickedBtnStep1Apply()
 	TCHAR tchConfig[256] = {};
 	((CEdit*)GetDlgItem(IDC_EDIT_STEP1_PATH))->GetWindowText(tchConfig, 256);
 	sprintf(m_stepConfig.ch_0, "%s", tchConfig);
-	//strcpy(m_stepConfig.ch_0, tchConfig);
-// 	int iLen = WideCharToMultiByte(CP_ACP, 0, (LPCWCH)&tchConfig, -1, NULL, 0, NULL, NULL);
-// 	WideCharToMultiByte(CP_ACP, 0, (LPCWCH)&tchConfig, -1, m_stepConfig.ch_0, iLen, NULL, NULL);
 
 	STIPADDR ipAddr = {};
 	((CIPAddressCtrl*)GetDlgItem(IDC_IPADDRESS_STEP1RECV))->GetAddress(ipAddr.ip1, ipAddr.ip2, ipAddr.ip3, ipAddr.ip4);

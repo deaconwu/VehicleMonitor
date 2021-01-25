@@ -21,10 +21,15 @@ public:
 
 enum eStepState
 {
-	eStepState_Excute = 0,	//开始执行
-	eStepState_Quit = 1,	//执行完成后退出
-	eStepState_Wait = 2,	//等待执行完成
-	eStepState_Error = 3,	//执行出错误
+	eStepState_Excute = 1,	//开始执行
+	eStepState_Quit = 2,	//执行完成后退出
+	eStepState_Wait = 3,	//等待执行完成
 };
+
+typedef struct stStepStatus
+{
+	eStepState eStep2;
+	eStepState eStep3;
+} STSTEPSTATUS;
 
 int sqlite3_exec_cmd(STSQLITELOG *obj);
