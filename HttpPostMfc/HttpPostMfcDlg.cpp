@@ -198,9 +198,17 @@ void CHttpPostMfcDlg::OnTimer(UINT_PTR nIDEvent)
 
 	if (nIDEvent == TIMER_ID_POST)
 	{
+		CLog::GetInstance()->OpenFile();
+
+		CLog::GetInstance()->Input(eLogLevel_Info, "Post Begin");
+
 		bool ret = OnPost(m_chPathPost, m_chUrl, m_chPathRecord);
 
 		OnPostCsvOnly(m_chPathPost, m_chUrl, m_chPathRecord);
+
+		CLog::GetInstance()->Input(eLogLevel_Info, "Post End\n");
+
+		CLog::GetInstance()->CloseFile();
 
 // 		if (ret)
 // 		{

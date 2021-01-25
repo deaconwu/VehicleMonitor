@@ -145,7 +145,8 @@ static bool SearchCsv(const char *szPath, char* pVin, STFILENAMEMODEL arrFile[],
 	return false;
 }
 
-int write_data(void* buffer, int size, int nmemb, void* resp) {
+int write_data(void* buffer, int size, int nmemb, void* resp)
+{
 	// 	std::string* str = dynamic_cast<std::string*>((std::string*)userp);
 	// 	str->append((char*)buffer, size * nmemb);
 
@@ -368,6 +369,7 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 	}
 
 	itemLen += snprintf(&strJson[itemLen], BUFFER_SIZE, JSON_VIN, chVin);
+	CLog::GetInstance()->Input(eLogLevel_Info, strJson);
 	strcat(strJson, "\r\n");
 
 	forms[iFileNum].option = CURLFORM_END;
@@ -429,19 +431,30 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 		forms[i].value = NULL;
 	}
 
+	unsigned int statusCode = 0;
+	char chLog[100] = {};
+
 	if (curlCode == CURLE_OK)
 	{
 		//读resp.log里的状态码
-		unsigned int iCode = CheckRespCode();
-		if (200 == iCode)
+		statusCode = CheckRespCode();
+		if (200 == statusCode)
 		{
 			//上传成功的文件才移动
 			OnMove(szPath, szHis, arrFile, iFileNum);
-			return true;
+
+			sprintf(chLog, "resp_code:%u, status_code:%u", curlCode, statusCode);
+			CLog::GetInstance()->Input(eLogLevel_Info, chLog);
 		}
 	}
 
-	return false;
+	if (curlCode != CURLE_OK || statusCode!=200)
+	{
+		sprintf(chLog, "resp_code:%u, status_code:%u", curlCode, statusCode);
+		CLog::GetInstance()->Input(eLogLevel_Err, chLog);
+	}
+
+	return (curlCode == CURLE_OK) && (statusCode == 200);
 }
 
 void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], unsigned int iFileNum)
@@ -456,6 +469,9 @@ void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], un
 
 	char *pPathSrc = new char[MAX_PATH*iFileNum];
 
+	char chLog[BUFFER_SIZE] = {};
+	sprintf(chLog, "OnMove Src:%s, Dst:%s, moveFiles:", szPath, szHis);
+
 	for (UINT i = 0; i < iFileNum; i++)
 	{
 		memset(pPathSrc, 0, MAX_PATH*iFileNum);
@@ -464,15 +480,26 @@ void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], un
 		strcat(pPathSrc, arrFile[i].szName);
 		strcat(pPathSrc, "\0\0");
 
+		if (i > 0)
+		{
+			strcat(chLog, " | ");
+		}
+		strcat(chLog, arrFile[i].szName);
+
 		FileOp.pFrom = pPathSrc;
 		FileOp.pTo = szHis;
 		FileOp.wFunc = FO_MOVE;
 		int ret = SHFileOperation(&FileOp);
 		if (ret)
 		{
-			printf("move error");
+			char chErr[100] = {};
+			sprintf("Move File Error, fileName %s", arrFile[i].szName);
+			CLog::GetInstance()->Input(eLogLevel_Err, chErr);
 		}
+
 	}
+
+	CLog::GetInstance()->Input(eLogLevel_Info, chLog);
 
 	free(pPathSrc);
 	pPathSrc = NULL;
