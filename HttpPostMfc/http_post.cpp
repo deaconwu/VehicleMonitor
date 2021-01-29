@@ -18,7 +18,7 @@ struct curl_formsSelf {
 	char     *value;
 };
 
-static unsigned int CheckRespCode()
+static unsigned int CheckRespCode(char* pMsg)
 {
 	FILE *fpRead = fopen("resp.log", "rb");
 
@@ -30,9 +30,11 @@ static unsigned int CheckRespCode()
 
 	json = cJSON_Parse(line);
 	cJSON_Print(json);
-	cJSON *arrayItem = cJSON_GetObjectItem(json, "code");
+	cJSON *codeItem = cJSON_GetObjectItem(json, "code");
+	cJSON *msgItem = cJSON_GetObjectItem(json, "msg");
+	strcpy(pMsg, msgItem->valuestring);
 
-	return arrayItem->valueint;
+	return codeItem->valueint;
 }
 
 //分离文件扩展名
@@ -432,25 +434,26 @@ bool OnPost(const char *szPath, char chVin[], STFILENAMEMODEL arrFile[], UINT iF
 	}
 
 	unsigned int statusCode = 0;
-	char chLog[100] = {};
+	char chLog[200] = {};
+	char chMsg[100] = {};
 
 	if (curlCode == CURLE_OK)
 	{
 		//读resp.log里的状态码
-		statusCode = CheckRespCode();
+		statusCode = CheckRespCode(chMsg);
 		if (200 == statusCode)
 		{
 			//上传成功的文件才移动
 			OnMove(szPath, szHis, arrFile, iFileNum);
 
-			sprintf(chLog, "resp_code:%u, status_code:%u", curlCode, statusCode);
+			sprintf(chLog, "resp_code:%u, status_code:%u, msg:%s", curlCode, statusCode, chMsg);
 			CLog::GetInstance()->Input(eLogLevel_Info, chLog);
 		}
 	}
 
 	if (curlCode != CURLE_OK || statusCode!=200)
 	{
-		sprintf(chLog, "resp_code:%u, status_code:%u", curlCode, statusCode);
+		sprintf(chLog, "resp_code:%u, status_code:%u, msg:%s", curlCode, statusCode, chMsg);
 		CLog::GetInstance()->Input(eLogLevel_Err, chLog);
 	}
 
@@ -470,7 +473,7 @@ void OnMove(const char *szPath, const char *szHis, STFILENAMEMODEL arrFile[], un
 	char *pPathSrc = new char[MAX_PATH*iFileNum];
 
 	char chLog[BUFFER_SIZE] = {};
-	sprintf(chLog, "OnMove Src:%s, Dst:%s, moveFiles:", szPath, szHis);
+	strcat(chLog, "move files: ");
 
 	for (UINT i = 0; i < iFileNum; i++)
 	{
