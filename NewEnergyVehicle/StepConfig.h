@@ -16,7 +16,7 @@ typedef struct stStep2Config
 	char ch_0[22];	//入库数据日期
 	char ch_1[256];	//原始数据文件路径
 	char ch_2[256];	//FK文件存放路径
-	char ch_3[256];	//国标数据存放路径
+	char ch_3[256];	//GB数据存放路径
 	char ch_4[256];	//RVT数据存放路径
 	char ch_5[256];	//DtVFb数据存放路径
 	char ch_6[256];	//TzTFb数据存放路
@@ -43,6 +43,7 @@ typedef struct stStep4Config
 	char ch_1[256];	//上传数据路径
 	char ch_2[22];	//上传执行时间
 	char ch_3;		//上传周期
+	char ch_4[256];	//历史数据路径
 } STSTEP4CONFIG;
 
 typedef struct stIpAddr

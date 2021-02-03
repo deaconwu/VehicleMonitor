@@ -137,8 +137,10 @@ DWORD GetProcessidFromName(LPCTSTR name)
 	DWORD id = 0;
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	pe.dwSize = sizeof(PROCESSENTRY32);
+
 	if (!Process32First(hSnapshot, &pe))
 		return 0;
+
 	while (1)
 	{
 		pe.dwSize = sizeof(PROCESSENTRY32);
@@ -151,6 +153,8 @@ DWORD GetProcessidFromName(LPCTSTR name)
 			break;
 		}
 	}
+
 	CloseHandle(hSnapshot);
+
 	return id;
 }
