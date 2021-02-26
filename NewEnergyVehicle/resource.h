@@ -61,6 +61,8 @@
 #define IDC_BTN_STEP3_PATHRESULT        1056
 #define IDC_BTN_STEP4_PATHUPLOAD        1057
 #define IDC_BTN_STEP3_PATHRGB           1058
+#define IDC_BTN_STEP4_PATHUPLOAD2       1058
+#define IDC_BTN_STEP4_PATHHISTORY       1058
 #define IDC_EDIT_STEP4_URL              1059
 #define IDC_EDIT_STEP3_PATHGB           1060
 #define IDC_DATETIMEPICKER_STEP3EXECUTE 1061
@@ -68,6 +70,7 @@
 #define IDC_CHECK2                      1063
 #define IDC_EDIT_STEP4_PERIOD           1064
 #define IDC_CHECK3                      1065
+#define IDC_EDIT_STEP4_PATHHISTORY      1065
 #define IDC_BTN_STEP4_PRE               1066
 #define IDC_EDIT_STEP3_PATHRESULT3      1067
 #define IDC_BTN_STEP4_COMPLETE          1068
